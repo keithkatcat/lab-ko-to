@@ -1,0 +1,75 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-text {
+  color: #880015;
+  font-weight: 900;
+  font-size: 24px;
+  text-transform: uppercase;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.month-year-display {
+  font-weight: 800;
+  color: #880015;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.btn-today,
+.nav-arrow {
+  background-color: #880015;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.btn-today:hover,
+.nav-arrow:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.user-profile-circle {
+  width: 45px;
+  height: 45px;
+  background-color: #F4EFEA;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #ff2222;
+  cursor: pointer;
+}
