@@ -47,7 +47,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                String role = mapPermToRole(perm);
+                String role;
+
+                if (perm == 1) {
+                    role = "ROLE_ADMIN";
+                } else
+                {
+                    role = "ROLE_USER";
+                }
+
                 UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                         email,
