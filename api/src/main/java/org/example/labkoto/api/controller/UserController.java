@@ -3,6 +3,7 @@ package org.example.labkoto.api.controller;
 import org.example.labkoto.api.model.User;
 import org.example.labkoto.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class UserController {
 
     //Get user by ID
     @GetMapping ("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<User> getUser(@PathVariable Integer id) {
         Optional<User> userOptional = userService.getUser(id);
         return userOptional.map(ResponseEntity::ok)
@@ -39,6 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping ("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
