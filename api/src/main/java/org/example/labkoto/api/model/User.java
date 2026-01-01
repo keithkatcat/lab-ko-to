@@ -3,31 +3,39 @@ package org.example.labkoto.api.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table (name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private int perm;
-    private String userId;
+    @Column (nullable = false, unique = true)
     private String email;
-    private String pass;
 
-    public User(int perm, String userId, String email, String pass) {
-        this.perm = perm;
-        this.userId = userId;
-        this.email = email;
-        this.pass = pass;
-    }
+    @Column (nullable = false)
+    private String password;
+
+    @Column (nullable = false)
+    private int perm;
 
     public User() {
-
     }
 
-    public Integer getId(Integer id) {
+    public User(Integer id, int perm, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.perm = perm;
+    }
+
+
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public int getPerm() {
@@ -38,14 +46,6 @@ public class User {
         this.perm = perm;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String id) {
-        this.userId = userId;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -54,12 +54,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

@@ -2,23 +2,45 @@ package org.example.labkoto.api.controller;
 
 import org.example.labkoto.api.model.User;
 import org.example.labkoto.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
+@RequestMapping ("/api/user")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    public void setUserService(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("/user")
-    public User getUser(@RequestParam Integer id) {
-        return userService.getUser(id);
+    @PostMapping ("/register")
+    public ResponseEntity<User> register(@RequestBody User user) {
+        User savedUser = userService.register(user);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    //Get user by ID
+    @GetMapping ("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Integer id) {
+        Optional<User> userOptional = userService.getUser(id);
+        return userOptional.map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping ("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User user) {
+        user.setId(id);
+        User updated = userService.updateUser(user);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping ("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }
