@@ -4,28 +4,110 @@ import pylonImage from '../assets/pylonn.png';
 
 const LoginSignup = () => {
   const [isSignup, setIsSignup] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(null); // null, 'student', or 'faculty'
+  const [selectedRole, setSelectedRole] = useState(null);
+  
+  // Form data states
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [signupData, setSignupData] = useState({ 
+    username: '', 
+    email: '', 
+    password: '' 
+  });
+  
+  // UI states
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login submitted');
-    console.log('Role:', selectedRole);
+    setIsLoading(true);
+    setErrorMessage('');
+    
+    try {
+      const response = await fetch('http://localhost:9090/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Store JWT token
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userRole', selectedRole);
+        console.log('Login successful!', data);
+        setSuccessMessage('Login successful! Redirecting...');
+        // TODO: Redirect to dashboard after 1 second
+        // setTimeout(() => {
+        //   window.location.href = '/dashboard';
+        // }, 1000);
+      } else {
+        setErrorMessage(data.message || 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      setErrorMessage('Unable to connect to server. Please try again later.');
+      console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignupSubmit = (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    console.log('Signup submitted');
-    console.log('Role:', selectedRole);
+    setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    
+    try {
+      const response = await fetch('http://localhost:9090/api/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: signupData.username,
+          email: signupData.email,
+          password: signupData.password,
+          perm: 0,
+          accountType: selectedRole === 'student' ? 'student' : 'professor'
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setSuccessMessage('Account created successfully! Please login.');
+        console.log('Signup successful!', data);
+        setTimeout(() => {
+          setIsSignup(false);
+          setSuccessMessage('');
+        }, 2000);
+      } else {
+        setErrorMessage(data.message || 'Signup failed. Please try again.');
+      }
+    } catch (error) {
+      setErrorMessage('Unable to connect to server. Please try again later.');
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const switchToSignup = (e) => {
     e.preventDefault();
     setIsSignup(true);
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
   const switchToLogin = (e) => {
     e.preventDefault();
     setIsSignup(false);
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
   const handleRoleSelect = (role) => {
@@ -35,23 +117,20 @@ const LoginSignup = () => {
   const goBackToRoleSelect = () => {
     setSelectedRole(null);
     setIsSignup(false);
+    setErrorMessage('');
+    setSuccessMessage('');
   };
 
   return (
     <div className="page-wrapper">
-
-      {/* Left Side - Pylon Image */}
       <div className="image-section">
         <img src={pylonImage} alt="PUP Pylon" />
       </div>
 
-      {/* Right Side - Form Container */}
       <div className="form-section">
         {selectedRole === null ? (
-          // ROLE SELECTION SCREEN
           <div className="role-selection-container">
-            <div className="title-section"> 
-              {/* Title */}
+            <div className="title-section">
               <h1>Lab Ko 'To</h1>
               <p>PUP CCIS Online Laboratory Scheduling System</p>
             </div>
@@ -74,10 +153,8 @@ const LoginSignup = () => {
             </div>
           </div>
         ) : (
-          // EXISTING FORM CONTAINER
           <div className={`container ${isSignup ? 'active' : ''}`}>
             
-            {/* Back Button */}
             <button className="back-to-role" onClick={goBackToRoleSelect}>
               <i className="fa-solid fa-arrow-left"></i> Change Role
             </button>
@@ -91,21 +168,49 @@ const LoginSignup = () => {
                 Welcome Back!
               </h2>
 
+              {errorMessage && !isSignup && (
+                <div className="error-message animation" style={{ '--D': 0.5 }}>
+                  {errorMessage}
+                </div>
+              )}
+
+              {successMessage && !isSignup && (
+                <div className="success-message animation" style={{ '--D': 0.5 }}>
+                  {successMessage}
+                </div>
+              )}
+
               <form onSubmit={handleLoginSubmit}>
                 <div className="input-box animation" style={{ '--D': 1 }}>
-                  <input type="email" className="input" required />
+                  <input 
+                    type="email" 
+                    className="input" 
+                    required 
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                    disabled={isLoading}
+                  />
                   <label>Email</label>
                   <i className="fa-solid fa-envelope"></i>
                 </div>
 
                 <div className="input-box animation" style={{ '--D': 2 }}>
-                  <input type="password" className="input" required />
+                  <input 
+                    type="password" 
+                    className="input" 
+                    required 
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                    disabled={isLoading}
+                  />
                   <label>Password</label>
                   <i className="fa-solid fa-key"></i>
                 </div>
 
                 <div className="input-box animation" style={{ '--D': 3 }}>
-                  <button type="submit" className="btn">Login</button>
+                  <button type="submit" className="btn" disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
+                  </button>
                 </div>
 
                 <div className="regi-link animation" style={{ '--D': 4 }}>
@@ -132,24 +237,65 @@ const LoginSignup = () => {
                 Get Started
               </h2>
 
+              {errorMessage && isSignup && (
+                <div className="error-message animation" style={{ '--D': 0.5 }}>
+                  {errorMessage}
+                </div>
+              )}
+
+              {successMessage && (
+                <div className="success-message animation" style={{ '--D': 0.5 }}>
+                  {successMessage}
+                </div>
+              )}
+
               <form onSubmit={handleSignupSubmit}>
                 <div className="input-box animation" style={{ '--D': 1 }}>
-                  <input type="email" className="input" required />
+                  <input 
+                    type="text" 
+                    className="input" 
+                    required 
+                    value={signupData.username}
+                    onChange={(e) => setSignupData({...signupData, username: e.target.value})}
+                    disabled={isLoading}
+                  />
+                  <label>Username</label>
+                  <i className="fa-solid fa-user"></i>
+                </div>
+
+                <div className="input-box animation" style={{ '--D': 2 }}>
+                  <input 
+                    type="email" 
+                    className="input" 
+                    required 
+                    value={signupData.email}
+                    onChange={(e) => setSignupData({...signupData, email: e.target.value})}
+                    disabled={isLoading}
+                  />
                   <label>Email</label>
                   <i className="fa-solid fa-envelope"></i>
                 </div>
 
-                <div className="input-box animation" style={{ '--D': 2 }}>
-                  <input type="password" className="input" required />
+                <div className="input-box animation" style={{ '--D': 3 }}>
+                  <input 
+                    type="password" 
+                    className="input" 
+                    required 
+                    value={signupData.password}
+                    onChange={(e) => setSignupData({...signupData, password: e.target.value})}
+                    disabled={isLoading}
+                  />
                   <label>Password</label>
                   <i className="fa-solid fa-key"></i>
                 </div>
 
-                <div className="input-box animation" style={{ '--D': 3 }}>
-                  <button type="submit" className="btn">Sign Up</button>
+                <div className="input-box animation" style={{ '--D': 4 }}>
+                  <button type="submit" className="btn" disabled={isLoading}>
+                    {isLoading ? 'Creating Account...' : 'Sign Up'}
+                  </button>
                 </div>
 
-                <div className="regi-link animation" style={{ '--D': 4 }}>
+                <div className="regi-link animation" style={{ '--D': 5 }}>
                   <p>
                     Already have an account?{' '}
                     <a href="#" onClick={switchToLogin}>

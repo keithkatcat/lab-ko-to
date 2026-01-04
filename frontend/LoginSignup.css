@@ -10,7 +10,6 @@ body {
     background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);
 }
 
-/* Page Layout */
 .page-wrapper {
     display: flex;
     min-height: 100vh;
@@ -18,41 +17,12 @@ body {
     overflow: hidden;
 }
 
-/* Title */
-.page-title {
-    position: absolute;
-    top: 60px;
-    left: 10%;
-    z-index: 10;
-    color: #ffffff;
-}
-
-.page-title h1 {
-    font-size: 64px;
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: 3px;
-    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
-}
-
-.page-title p {
-    font-size: 15px;
-    font-weight: 400;
-    margin: 15px 0 0 0;
-    opacity: 0.95;
-    letter-spacing: 0.5px;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
-    max-width: 350px;
-}
-
-/* Left Side - Image */
 .image-section {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-
     -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
     mask-image: linear-gradient(to right, black 88%, transparent 100%);
 }
@@ -76,7 +46,6 @@ body {
     opacity: 0.9;
 }
 
-/* Right Side - Form Section */
 .form-section {
     flex: 1;
     display: flex;
@@ -85,7 +54,6 @@ body {
     padding: 20px;
 }
 
-/* ==================== ROLE SELECTION STYLES ==================== */
 .role-selection-container {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -186,7 +154,6 @@ body {
     color: #ffffff;
 }
 
-/* Back to Role Button */
 .back-to-role {
     position: absolute;
     top: 20px;
@@ -213,8 +180,6 @@ body {
     font-size: 16px;
 }
 
-/* ==================== FORM CONTAINER STYLES ==================== */
-/* Form Container */
 .container {
     position: relative;
     width: 600px;
@@ -224,10 +189,9 @@ body {
     -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     margin-left: -100px;
-    box-shadow: -20px 20px 60px rgba(0, 0, 0, 0.4);
     z-index: 10;
 }
 
@@ -376,6 +340,11 @@ body {
     color: #ffffff;
 }
 
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .regi-link {
     font-size: 14px;
     text-align: center;
@@ -495,19 +464,31 @@ body {
     transition-delay: .5s;
 }
 
-/* Mobile responsive */
+.error-message {
+    background-color: #fee;
+    color: #c00;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 15px;
+    border: 1px solid #fcc;
+}
+
+.success-message {
+    background-color: #efe;
+    color: #0a0;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 15px;
+    border: 1px solid #cfc;
+}
+
 @media (max-width: 768px) {
     .page-wrapper {
         flex-direction: column;
-    }
-
-    .page-title {
-        left: 20px;
-        top: 20px;
-    }
-
-    .page-title h1 {
-        font-size: 48px;
     }
 
     .image-section {
