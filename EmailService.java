@@ -6,8 +6,8 @@ import java.util.Properties;
 
 public class EmailService {
 
-    private static final String FROM_EMAIL = "your-email@gmail.com";
-    private static final String APP_PASSWORD = "your-app-password";
+    private static final String FROM_EMAIL = "labkoto.reservation.system@gmail.com";
+    private static final String APP_PASSWORD = "dhyqrcusmxptpryc";
 
     public static void sendOtpEmail(String toEmail, String otp) throws MessagingException {
 
@@ -35,3 +35,4 @@ public class EmailService {
         Transport.send(message);
     }
 }
+
