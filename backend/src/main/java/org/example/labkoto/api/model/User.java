@@ -19,25 +19,39 @@ public class User {
     @Column (nullable = false)
     private String password;
 
-    @Column (nullable = false)
-    private Integer perm;
-
-    @Column (nullable = false)
+    @Column (nullable = false, name = "account_type")
     private String accountType;
 
+    @Column (name = "email_verified")
+    private Boolean emailVerified = false;
+
     public String getAccountType() {
-        if ("admin".equalsIgnoreCase(accountType)) {
-            return "admin";
-        } else if ("professor".equalsIgnoreCase(accountType)) {
-            return "professor";
-        } else {
+        if (accountType == null) {
             return "student";
         }
+        String normalized = accountType.toLowerCase().trim();
+
+        if (normalized.equalsIgnoreCase("admin")) {
+            return "admin";
+        } else if (normalized.equalsIgnoreCase("professor")) {
+            return "professor";
+        } else
+            return "student";
     }
 
     public void setAccountType(String accountType) {
-        this.accountType = accountType;
-        this.perm = "admin".equalsIgnoreCase(accountType) ? 1 : 0;
+        if (accountType == null || accountType.trim().isEmpty()) {
+            this.accountType = "student";
+            return;
+        }
+        String normalized = accountType.toLowerCase().trim();
+
+        if (normalized.equalsIgnoreCase("admin") || normalized.equalsIgnoreCase("professor") ||
+            normalized.equalsIgnoreCase("student")){
+            this.accountType = normalized;
+        } else {
+            this.accountType = "student";
+        }
     }
 
 
@@ -49,7 +63,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.perm = perm;
+        this.accountType = accountType;
     }
 
 
@@ -62,11 +76,11 @@ public class User {
     }
 
     public Integer getPerm() {
-        return perm;
+        return "admin".equalsIgnoreCase(accountType) ? 1 : 0;
     }
 
     public void setPerm(Integer perm) {
-        this.perm = perm;
+        this.accountType = (perm == 1) ? "admin" : "student";
     }
 
     public String getEmail() {
@@ -91,6 +105,14 @@ public class User {
 
     public String getUsername() {
         return username;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified != null ? emailVerified : false;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 }
 
