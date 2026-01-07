@@ -1,0 +1,38 @@
+application.properties
+
+#Database Files
+*.db
+*.db-journal
+
+#Log Files
+*.log
+logs/
+
+#Maven Build Files
+target/
+build/
+*.class
+
+#IDE Files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+#OS Files
+.DS_Store
+Thumbs.db
+
+#Compiled Java Class Files
+*.class
+
+#Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar

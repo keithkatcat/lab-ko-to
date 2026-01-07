@@ -25,6 +25,7 @@ public class AdminReservationController {
     }
 
     @PutMapping("/{id}/approve")
+    @PreAuthorize(("hasAuthority('ROLE_ADMIN')"))
     public ResponseEntity<Reservation> approveReservation(
         @PathVariable Integer id,
         @RequestParam Integer userId,
@@ -33,6 +34,7 @@ public class AdminReservationController {
     }
 
     @PutMapping("/{id}/deny")
+    @PreAuthorize(("hasAuthority('ROLE_ADMIN')"))
     public ResponseEntity<Reservation> denyReservation(
         @PathVariable Integer id,
         @RequestParam Integer userId,

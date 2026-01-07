@@ -40,20 +40,26 @@ public class ReservationService {
         Lab lab = labRepository.findById(labId)
             .orElseThrow(() -> new RuntimeException("Lab not found"));
 
-        if(!lab.getIsActive())
-        {
+        if (!lab.getIsActive()) {
             throw new IllegalStateException("Lab is not available");
         }
 
-        if (user.getPerm() != 1) {
-            reservation.setStatus("pending");
+        if (!"admin".equalsIgnoreCase(user.getAccountType()))
+        {
+            reservation.setStatus("Pending");
+        }
+        else
+        {
+            reservation.setStatus("Approved");
         }
 
         List<Reservation> existingReservations = reservationRepository.findByLabId(labId);
+
         for (Reservation existing : existingReservations) {
             if (existing.getDate().equals(reservation.getDate())) {
-                boolean overlap = !(reservation.getEndTime().compareTo(existing.getEndTime()) <= 0 ||
-                    reservation.getStartTime().compareTo(existing.getEndTime()) >= 0);
+
+                boolean overlap = reservation.getStartTime().isBefore(existing.getEndTime()) &&
+                    reservation.getEndTime().isAfter(existing.getStartTime());
                 if (overlap) {
                     throw new RuntimeException("The Laboratory is already reserved at this timeslot.");
                 }
@@ -72,7 +78,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Reservation not found"));
 
-        if (user.getPerm() != 1) {
+        if (!"admin".equalsIgnoreCase(user.getAccountType())) {
             throw new RuntimeException("Only Admins can update reservations");
         }
 
@@ -90,7 +96,7 @@ public class ReservationService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.getPerm() != 1) {
+        if (!"admin".equalsIgnoreCase(user.getAccountType())) {
             throw new RuntimeException("Only Admins can delete reservations");
         }
         reservationRepository.deleteById(id);
@@ -98,7 +104,7 @@ public class ReservationService {
 
     public Reservation approveReservation(Integer id, Integer userId, String notes) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getPerm() != 1) {
+        if (!"admin".equalsIgnoreCase(user.getAccountType())) {
             throw new RuntimeException("Only admins can approve reservations");
         }
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
@@ -109,7 +115,7 @@ public class ReservationService {
 
     public Reservation denyReservation(Integer id, Integer userId, String notes) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getPerm() != 1) {
+        if (!"admin".equalsIgnoreCase(user.getAccountType())) {
             throw new RuntimeException("Only admins can deny reservations");
         }
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new RuntimeException("Reservation not found"));
@@ -120,10 +126,10 @@ public class ReservationService {
 
     public List<Reservation> getPendingReservations(Integer userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        if (user.getPerm() != 1) {
+        if (!"admin".equalsIgnoreCase(user.getAccountType())) {
             throw new RuntimeException("Only admins can view pending reservations");
         }
-        return reservationRepository.findByStatus("pending");
+        return reservationRepository.findByStatus("Pending");
     }
 }
 

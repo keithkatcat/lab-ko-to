@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
-        if (path.equals("/api/auth/login") || path.equals("/api/auth/register")) {
+        if (path.equals("/api/auth/login") || path.equals("/api/user/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,8 +51,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 if (perm == 1) {
                     role = "ROLE_ADMIN";
-                } else
-                {
+                } else {
                     role = "ROLE_USER";
                 }
 
@@ -68,14 +67,5 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String mapPermToRole(int perm) {
-        switch (perm) {
-            case 1:
-                return "ROLE_ADMIN";
-            default:
-                return "ROLE_USER";
-        }
     }
 }
