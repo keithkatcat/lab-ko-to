@@ -40,8 +40,7 @@ public class ReservationService {
         Lab lab = labRepository.findById(labId)
             .orElseThrow(() -> new RuntimeException("Lab not found"));
 
-        if(!lab.getIsActive())
-        {
+        if (!lab.getIsActive()) {
             throw new IllegalStateException("Lab is not available");
         }
 
@@ -50,10 +49,12 @@ public class ReservationService {
         }
 
         List<Reservation> existingReservations = reservationRepository.findByLabId(labId);
+
         for (Reservation existing : existingReservations) {
             if (existing.getDate().equals(reservation.getDate())) {
-                boolean overlap = !(reservation.getEndTime().compareTo(existing.getEndTime()) <= 0 ||
-                    reservation.getStartTime().compareTo(existing.getEndTime()) >= 0);
+
+                boolean overlap = reservation.getStartTime().isBefore(existing.getEndTime()) &&
+                    reservation.getEndTime().isAfter(existing.getStartTime());
                 if (overlap) {
                     throw new RuntimeException("The Laboratory is already reserved at this timeslot.");
                 }
