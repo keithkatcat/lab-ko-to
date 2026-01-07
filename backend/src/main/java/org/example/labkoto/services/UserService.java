@@ -48,7 +48,8 @@ public class UserService {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         existing.setEmail(user.getEmail());
-        existing.setPerm(user.getPerm());
+        existing.setUsername(user.getUsername());
+        existing.setAccountType(user.getAccountType());
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
             existing.setPassword(passwordEncoder.encode(user.getPassword()));
