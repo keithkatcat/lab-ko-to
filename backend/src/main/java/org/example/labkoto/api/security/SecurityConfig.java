@@ -30,7 +30,7 @@ public class SecurityConfig {
                 return corsConfig;
             }))
             .authorizeHttpRequests(auth -> auth.
-                                       requestMatchers("/api/auth/login", "/api/user/register").permitAll()
+                                       requestMatchers("/api/auth/login", "/api/user/register", "/api/otp/**").permitAll()
                                        .anyRequest().authenticated()
                                   )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
