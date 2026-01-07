@@ -19,7 +19,7 @@ public class EmailService {
 
     public EmailService(
         @Value ("${email.from}") String fromEmail,
-        @Value ("${email.password") String appPassword) {
+        @Value ("${email.password}") String appPassword) {
         this.fromEmail = fromEmail;
         this.appPassword = appPassword;
     }

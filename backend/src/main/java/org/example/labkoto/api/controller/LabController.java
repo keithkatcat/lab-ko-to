@@ -48,7 +48,7 @@ public ResponseEntity<Lab> updateLab(@PathVariable Integer id, @RequestBody Lab 
     return ResponseEntity.ok(labService.updateLab(id, labDetails));
 }
 
-@PutMapping ("/labs/{id}/status")
+@PutMapping ("/{id}/status")
 @PreAuthorize ("hasAuthority('ROLE_ADMIN')")
 public ResponseEntity<Lab> updateLabStatus(@PathVariable Integer id,
                                            @RequestParam boolean isActive) {
