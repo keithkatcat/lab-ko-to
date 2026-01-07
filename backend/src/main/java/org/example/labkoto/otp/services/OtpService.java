@@ -1,51 +1,57 @@
 package org.example.labkoto.otp.services;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import org.example.labkoto.api.model.Otp;
+import org.example.labkoto.api.model.User;
+import org.example.labkoto.repositories.OtpRepository;
+import org.example.labkoto.repositories.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
 public class OtpService {
 
-    public static void saveOtp(Connection conn, int userId, String otp, String purpose) throws Exception {
-        String sql = """
-            INSERT INTO otp_tokens (user_id, token, purpose, expires_at)
-            VALUES (?, ?, ?, datetime('now', '+5 minutes'))
-        """;
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, otp);
-            stmt.setString(3, purpose);
-            stmt.executeUpdate();
-        }
+    private final OtpRepository otpRepository;
+    private final UserRepository userRepository;
+
+    public OtpService(OtpRepository otpRepository, UserRepository userRepository) {
+        this.otpRepository = otpRepository;
+        this.userRepository = userRepository;
     }
 
-    public static boolean verifyOtp(Connection conn, int userId, String otp, String purpose) throws Exception {
-        String selectSql = """
-            SELECT id FROM otp_tokens
-            WHERE user_id = ? AND token = ? AND purpose = ? AND used = 0 AND expires_at > datetime('now')
-        """;
-        try (PreparedStatement stmt = conn.prepareStatement(selectSql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, otp);
-            stmt.setString(3, purpose);
+    @Transactional
+    public void saveOtp(Integer userId, String token, String purpose) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int otpId = rs.getInt("id");
-                try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE otp_tokens SET used = 1 WHERE id = ?")) {
-                    updateStmt.setInt(1, otpId);
-                    updateStmt.executeUpdate();
-                }
+        Otp otp = new Otp();
+        otp.setUser(user);
+        otp.setToken(token);
+        otp.setPurpose(purpose);
+        otp.setExpiresAt(LocalDateTime.now().plusMinutes(5));
 
-                if (purpose.equals("email_verification")) {
-                    try (PreparedStatement userStmt = conn.prepareStatement("UPDATE users SET email_verified = 1 WHERE id = ?")) {
-                        userStmt.setInt(1, userId);
-                        userStmt.executeUpdate();
-                    }
-                }
+        otpRepository.save(otp);
+    }
 
-                return true;
+    @Transactional
+    public boolean verifyOtp(Integer userId, String token, String purpose) {
+        Optional<Otp> otpOpt = otpRepository.findByUserIdAndTokenAndPurposeAndUsedFalseAndExpiresAtAfter(
+            userId, token, purpose, LocalDateTime.now()
+                                                                                                        );
+        if (otpOpt.isPresent()) {
+            Otp otp = otpOpt.get();
+            otp.setUsed(true);
+            otpRepository.save(otp);
+
+            if("email_verification".equals(purpose)) {
+                User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+                user.setEmailVerified(true);
+                userRepository.save(user);
             }
+            return true;
         }
         return false;
     }
