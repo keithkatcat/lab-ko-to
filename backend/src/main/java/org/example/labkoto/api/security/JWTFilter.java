@@ -69,13 +69,3 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-    private String mapPermToRole(int perm) {
-        switch (perm) {
-            case 1:
-                return "ROLE_ADMIN";
-            default:
-                return "ROLE_USER";
-        }
-    }
-}
