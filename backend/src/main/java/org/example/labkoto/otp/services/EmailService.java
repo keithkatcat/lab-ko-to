@@ -11,15 +11,12 @@ import java.util.Properties;
 @Service
 public class EmailService {
 
-    private static final String FROM_EMAIL = "labkoto.reservation.system@gmail.com";
-    private static final String APP_PASSWORD = "dhyqrcusmxptpryc";
-
     private final String fromEmail;
     private final String appPassword;
 
     public EmailService(
-        @Value ("${email.from}") String fromEmail,
-        @Value ("${email.password}") String appPassword) {
+        @Value("${email.from}") String fromEmail,
+        @Value("${email.password}") String appPassword) {
         this.fromEmail = fromEmail;
         this.appPassword = appPassword;
     }
