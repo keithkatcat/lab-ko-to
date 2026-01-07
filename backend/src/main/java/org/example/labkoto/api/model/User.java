@@ -1,6 +1,7 @@
 package org.example.labkoto.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,6 +19,7 @@ public class User {
     private String email;
 
     @Column (nullable = false)
+    @JsonProperty (access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column (nullable = false, name = "account_type")
@@ -75,7 +77,7 @@ public class User {
     public void setId(Integer id) {
         this.id = id;
     }
-
+@JsonIgnore
     public Integer getPerm() {
         return "admin".equalsIgnoreCase(accountType) ? 1 : 0;
     }
@@ -92,7 +94,7 @@ public class User {
         this.email = email;
     }
 
-    @JsonIgnore
+
     public String getPassword() {
         return password;
     }

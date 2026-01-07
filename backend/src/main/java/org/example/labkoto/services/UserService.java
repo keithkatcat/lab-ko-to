@@ -47,9 +47,13 @@ public class UserService {
         User existing = userRepository.findById(user.getId())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        existing.setEmail(user.getEmail());
-        existing.setUsername(user.getUsername());
-        existing.setAccountType(user.getAccountType());
+        if(user.getEmail() != null && !user.getEmail().isBlank()){
+        existing.setEmail(user.getEmail());}
+
+        if(user.getUsername() != null && !user.getUsername().isBlank()){
+        existing.setUsername(user.getUsername());}
+        if(user.getAccountType() != null && !user.getAccountType().isBlank()){
+        existing.setAccountType(user.getAccountType());}
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
             existing.setPassword(passwordEncoder.encode(user.getPassword()));
