@@ -2,6 +2,9 @@ package org.example.labkoto.api.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Table(name = "reservations")
 public class Reservation {
@@ -18,13 +21,13 @@ public class Reservation {
     private Lab lab;
 
     @Column (nullable = false)
-    private String date;
+    private LocalDate date;
 
     @Column(nullable = false)
-    private String startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private String endTime;
+    private LocalTime endTime;
 
     @Column(nullable = false)
     private String purpose;
