@@ -51,8 +51,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 if (perm == 1) {
                     role = "ROLE_ADMIN";
-                } else
-                {
+                } else {
                     role = "ROLE_USER";
                 }
 
@@ -69,3 +68,4 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+}
