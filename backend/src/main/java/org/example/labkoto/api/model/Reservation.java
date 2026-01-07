@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "reservations")
+@Table (name = "reservations")
 public class Reservation {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -18,27 +18,37 @@ public class Reservation {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "lab_id", nullable = false)
+    @JoinColumn (name = "lab_id", nullable = false)
     private Lab lab;
 
     @Column (nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
+    @Column (nullable = false)
     private LocalTime startTime;
 
-    @Column(nullable = false)
+    @Column (nullable = false)
     private LocalTime endTime;
 
-    @Column(nullable = false)
+    @Column (nullable = false)
     private String purpose;
 
-    @Column(nullable = false)
+    @Column (nullable = false)
     private String status = "pending";
 
     private String adminNotes;
 
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+        if (this.status == null || this.status.isEmpty()) {
+            this.status = "pending";
+        }
+    }
 
     public Integer getId() {
         return id;
