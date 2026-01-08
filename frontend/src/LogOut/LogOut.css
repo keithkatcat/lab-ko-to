@@ -1,0 +1,212 @@
+.logout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.logout-container {
+  position: relative;
+  background: #F4EFEA;
+  border: 5px solid #FACCCC;
+  border-radius: 25px;
+  width: 90%;
+  max-width: 360px;
+  padding: 30px 25px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.logout-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none !important;
+  outline: none !important;
+  font-size: 28px;
+  color: #374151;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.logout-close:hover {
+  opacity: 1;
+  color: #c92a2a;
+  transform: scale(1.1);
+}
+
+.logout-close:active {
+  color: #a02020;
+  transform: scale(0.95);
+}
+
+.logout-content {
+  text-align: center;
+}
+
+.logout-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  color: #374151;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.logout-message {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 25px;
+}
+
+.logout-buttons {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.logout-confirm-btn {
+  width: 100%;
+  background: #FACCCC;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 30px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-confirm-btn:hover:not(:disabled) {
+  background: #F4A6A6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(250, 204, 204, 0.4);
+}
+
+.logout-confirm-btn:active:not(:disabled) {
+  background: #EE9999;
+  transform: translateY(0);
+}
+
+.logout-confirm-btn:focus {
+  outline: none;
+}
+
+.logout-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.logout-cancel-btn {
+  width: 100%;
+  background: #E5E7EB;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 30px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-cancel-btn:hover:not(:disabled) {
+  background: #D1D5DB;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(209, 213, 219, 0.4);
+}
+
+.logout-cancel-btn:active:not(:disabled) {
+  background: #C4C8CF;
+  transform: translateY(0);
+}
+
+.logout-cancel-btn:focus {
+  outline: none;
+}
+
+.logout-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.logout-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  color: #374151;
+}
+
+.logout-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #FACCCC;
+  border-top-color: #F4A6A6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logout-divider {
+  height: 2px;
+  background: #FACCCC;
+  margin: 25px 0;
+  border-radius: 2px;
+}
+
+.logout-info {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: #9CA3AF;
+  margin-top: 15px;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .logout-container {
+    padding: 25px 20px;
+    max-width: 320px;
+  }
+
+  .logout-title {
+    font-size: 20px;
+  }
+
+  .logout-message {
+    font-size: 13px;
+  }
+}
