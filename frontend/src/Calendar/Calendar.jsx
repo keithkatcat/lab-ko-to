@@ -1,5 +1,5 @@
 import React from 'react';
-import './MainContent.css';
+import './MainContent/MainContent.css';
 import './Calendar.css';
 
 function Calendar({ currentMonth, currentYear, weekDays, events, bookedDates, onDayClick }) {
