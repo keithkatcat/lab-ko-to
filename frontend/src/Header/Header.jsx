@@ -1,5 +1,5 @@
 import React from 'react';
-import './MainContent.css';
+import './MainContent/MainContent.css';
 import './Header.css';
 
 export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMonth, setCurrentYear }) {
@@ -65,3 +65,4 @@ export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMont
 }
 
 export default Header;
+
