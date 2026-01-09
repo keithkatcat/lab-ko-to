@@ -2,10 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import labkoto_logo from './assets/labkoto_logo.png';
 import './App.css';
 
-import Sidebar from './Sidebar';
-import Header from './header';
-import Calendar from './Calendar';
-import BookingModal from './BookingModal';
+import Sidebar from './Sidebar/Sidebar';
+import Header from './Header/Header';
+import Calendar from './Calendar/Calendar';
+import BookingModal from './BookingModal/BookingModal';
 
 const allLabRooms = [
   'S501', 'S502', 'S503', 'S504', 'S505',
@@ -22,6 +22,9 @@ function App() {
   const [events, setEvents] = useState({});
   const [previousBookings, setPreviousBookings] = useState([]);
   const [bookedDates] = useState([]);
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey);
@@ -32,7 +35,9 @@ function App() {
     labRoom: '',
     purpose: '',
     dateRequested: '',
-    timeRequested: ''
+    timeRequested: '',
+    startTime: '',
+    endTime: ''
   });
 
   const availableRooms = useMemo(() => {
@@ -47,6 +52,17 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
+  const createNotification = (message, status) => {
+    const newNotif = {
+      id: Date.now(),
+      message: message,
+      status: status, 
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+    setUnreadCount(prev => prev + 1);
+  };
+
   const handleAddEvent = (newEvent) => {
     const existingEvents = events[selectedDate] || [];
     const conflictingBooking = existingEvents.find(event =>
@@ -55,7 +71,7 @@ function App() {
     );
 
     if (conflictingBooking) {
-      alert(`${newEvent.labRoom} is already booked at ${newEvent.timeRequested} on this date.`);
+      createNotification(`Conflict: ${newEvent.labRoom} is already taken.`, 'rejected');
       return;
     }
 
@@ -64,16 +80,18 @@ function App() {
     
     updatedEvents[selectedDate].push({
       time: newEvent.timeRequested,
-      title: `${newEvent.labRoom} - ${newEvent.name}`,
+      title: `PENDING: ${newEvent.labRoom}`,
       class: 'event-yellow',
       details: newEvent
     });
+
+    createNotification(`Request Sent: ${newEvent.labRoom} for ${newEvent.name}`, 'pending');
 
     setEvents(updatedEvents);
     setShowModal(false);
     setEventForm({
       name: '', program: '', section: '', labRoom: '',
-      purpose: '', dateRequested: '', timeRequested: ''
+      purpose: '', dateRequested: '', timeRequested: '', startTime: '', endTime: ''
     });
   };
 
@@ -81,6 +99,8 @@ function App() {
     const eventToApprove = events[date][index];
     setPreviousBookings(prev => [...prev, { ...eventToApprove, date }]);
     
+    createNotification(`Confirmed: ${eventToApprove.details.labRoom} booking approved!`, 'success');
+
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -88,6 +108,10 @@ function App() {
   };
 
   const handleRemove = (date, index) => {
+    const eventToRemove = events[date][index];
+    
+    createNotification(`Removed: Request for ${eventToRemove.details.labRoom} was cancelled.`, 'rejected');
+
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -119,6 +143,9 @@ function App() {
           currentYear={currentYear}
           setCurrentMonth={setCurrentMonth}
           setCurrentYear={setCurrentYear}
+          notifications={notifications}
+          unreadCount={unreadCount}
+          setUnreadCount={setUnreadCount}
         />
 
         <Calendar
