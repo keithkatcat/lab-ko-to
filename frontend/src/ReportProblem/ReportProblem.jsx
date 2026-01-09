@@ -37,8 +37,8 @@ const ReportProblem = ({ isOpen, onClose }) => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          userId: parseInt(userId), // Ensure userId is a number
-          report: description.trim() // Changed from 'description' to 'report'
+          userId: parseInt(userId), 
+          report: description.trim() 
         })
       });
 
@@ -135,5 +135,6 @@ const ReportProblem = ({ isOpen, onClose }) => {
     </div>
   );
 };
+
 
 export default ReportProblem;
