@@ -22,9 +22,6 @@ function App() {
   const [events, setEvents] = useState({});
   const [previousBookings, setPreviousBookings] = useState([]);
   const [bookedDates] = useState([]);
-
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey);
@@ -50,17 +47,6 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const createNotification = (message, status) => {
-    const newNotif = {
-      id: Date.now(),
-      message: message,
-      status: status, 
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    setNotifications(prev => [newNotif, ...prev]);
-    setUnreadCount(prev => prev + 1);
-  };
-
   const handleAddEvent = (newEvent) => {
     const existingEvents = events[selectedDate] || [];
     const conflictingBooking = existingEvents.find(event =>
@@ -69,7 +55,7 @@ function App() {
     );
 
     if (conflictingBooking) {
-      createNotification(`Conflict: ${newEvent.labRoom} is already taken.`, 'rejected');
+      alert(`${newEvent.labRoom} is already booked at ${newEvent.timeRequested} on this date.`);
       return;
     }
 
@@ -78,12 +64,10 @@ function App() {
     
     updatedEvents[selectedDate].push({
       time: newEvent.timeRequested,
-      title: `PENDING: ${newEvent.labRoom}`,
+      title: `${newEvent.labRoom} - ${newEvent.name}`,
       class: 'event-yellow',
       details: newEvent
     });
-
-    createNotification(`Request Sent: ${newEvent.labRoom} for ${newEvent.name}`, 'pending');
 
     setEvents(updatedEvents);
     setShowModal(false);
@@ -97,8 +81,6 @@ function App() {
     const eventToApprove = events[date][index];
     setPreviousBookings(prev => [...prev, { ...eventToApprove, date }]);
     
-    createNotification(`Confirmed: ${eventToApprove.details.labRoom} booking approved!`, 'success');
-
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -106,10 +88,6 @@ function App() {
   };
 
   const handleRemove = (date, index) => {
-    const eventToRemove = events[date][index];
-    
-    createNotification(`Removed: Request for ${eventToRemove.details.labRoom} was cancelled.`, 'rejected');
-
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -141,9 +119,6 @@ function App() {
           currentYear={currentYear}
           setCurrentMonth={setCurrentMonth}
           setCurrentYear={setCurrentYear}
-          notifications={notifications}
-          unreadCount={unreadCount}
-          setUnreadCount={setUnreadCount}
         />
 
         <Calendar

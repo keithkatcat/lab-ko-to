@@ -1,18 +1,8 @@
 import React from 'react';
-import './MainContent.css';
+import './MainContent/MainContent.css';
 import './Header.css';
-import NotificationBell from './NotificationBell';
 
-export function Header({ 
-  labkoto_logo, 
-  currentMonth, 
-  currentYear, 
-  setCurrentMonth, 
-  setCurrentYear,
-  notifications,
-  unreadCount,
-  setUnreadCount 
-}) {
+export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMonth, setCurrentYear }) {
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -65,13 +55,7 @@ export function Header({
         </div>
       </div>
 
-      <div className="header-right" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <NotificationBell 
-          notifications={notifications} 
-          unreadCount={unreadCount} 
-          setUnreadCount={setUnreadCount} 
-        />
-        
+      <div className="header-right">
         <div className="user-profile-circle">
           👤
         </div>
@@ -81,3 +65,4 @@ export function Header({
 }
 
 export default Header;
+
