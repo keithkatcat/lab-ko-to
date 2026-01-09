@@ -9,7 +9,7 @@ export function Header({
   currentYear, 
   setCurrentMonth, 
   setCurrentYear,
-  setIsDropdownOpen,  // ← Receive this from App.jsx
+  setIsDropdownOpen,  
   notifications = [],
   unreadCount = 0,
   setUnreadCount
@@ -77,7 +77,7 @@ export function Header({
           className="user-profile-circle"
           onClick={(e) => {
             e.stopPropagation();
-            setIsDropdownOpen(prev => !prev);  // ← Toggle the App.jsx state
+            setIsDropdownOpen(prev => !prev);  
           }}
           style={{ cursor: 'pointer' }}
         >
@@ -87,5 +87,6 @@ export function Header({
     </div>
   );
 }
+
 
 export default Header;
