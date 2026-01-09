@@ -9,14 +9,6 @@ const LogOut = ({ isOpen, onClose }) => {
   const handleLogout = async () => {
     setLoading(true);
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
       localStorage.removeItem('token');
       localStorage.removeItem('user');
      
