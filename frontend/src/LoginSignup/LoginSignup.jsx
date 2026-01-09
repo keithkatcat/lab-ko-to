@@ -71,7 +71,6 @@ const LoginSignup = () => {
           username: signupData.username,
           email: signupData.email,
           password: signupData.password,
-          perm: 0,
           accountType: selectedRole === 'student' ? 'student' : 'professor'
         })
       });
