@@ -8,52 +8,117 @@ export function Sidebar({
   events,
   previousBookings,
   onApprove,
-  onRemove
+  onRemove,
 }) {
+  const dateStyle = {
+    fontSize: '24px',
+    fontWeight: '900',
+    color: '#C73A4A',
+    lineHeight: '1',
+    marginTop: '5px',
+  };
+
+  const dateSubStyle = {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: '#C73A4A',
+    marginTop: '2px',
+    opacity: 0.9,
+  };
+
+  const timeStyle = {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#880015',
+    marginTop: '8px',
+    opacity: 0.7,
+  };
+
+  const availableSectionStyle = { flex: 1, overflowY: 'auto' };
+
+  const noDateStyle = { fontSize: '12px', color: '#8d4b3e', opacity: 0.7, marginTop: '10px' };
+
+  const roomsGridStyle = { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' };
+
+  const roomStyle = {
+    background: '#F4EFEA',
+    padding: '6px',
+    borderRadius: '10px',
+    textAlign: 'center',
+    fontWeight: '800',
+    color: '#C73A4A',
+    fontSize: '12px',
+  };
+
+  const notAvailableStyle = { color: '#d85c5c', fontSize: '12px', fontWeight: 'bold' };
+
+  const bookingCardStyle = {
+    background: 'white',
+    padding: '8px',
+    borderRadius: '12px',
+    marginBottom: '6px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+  };
+
+  const bookingLabStyle = { fontWeight: 'bold', color: '#8b1538', fontSize: '11px' };
+  const bookingNameStyle = { fontSize: '10px', color: '#555' };
+  const bookingMetaStyle = { fontSize: '9px', color: '#999', marginBottom: '4px' };
+
+  const approveBtnStyle = {
+    border: 'none',
+    background: '#22c55e',
+    color: 'white',
+    borderRadius: '4px',
+    padding: '2px 6px',
+    cursor: 'pointer',
+    fontSize: '10px',
+  };
+
+  const removeBtnStyle = {
+    border: 'none',
+    background: '#ef4444',
+    color: 'white',
+    borderRadius: '4px',
+    padding: '2px 6px',
+    cursor: 'pointer',
+    fontSize: '10px',
+  };
+
+  const previousBookingStyle = {
+    background: '#F4EFEA',
+    padding: '8px',
+    borderRadius: '12px',
+    marginBottom: '4px',
+    fontSize: '10px',
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-section">
         <div className="sidebar-section-title">CURRENT DATE</div>
-        <div style={{
-          fontSize: '24px',
-          fontWeight: '900',
-          color: '#C73A4A',
-          lineHeight: '1',
-          marginTop: '5px'
-        }}>
+
+        <div style={dateStyle}>
           {currentTime.toLocaleDateString('en-US', { weekday: 'long' })}
         </div>
 
-        <div style={{
-          fontSize: '14px',
-          fontWeight: 'bold',
-          color: '#C73A4A',
-          marginTop: '2px',
-          opacity: 0.9
-        }}>
+        <div style={dateSubStyle}>
           {currentTime.toLocaleDateString('en-US', {
             month: 'long',
             day: 'numeric',
-            year: 'numeric'
+            year: 'numeric',
           })}
         </div>
 
-        <div style={{
-          fontSize: '13px',
-          fontWeight: '700',
-          color: '#880015',
-          marginTop: '8px',
-          opacity: 0.7
-        }}>
+        <div style={timeStyle}>
           {currentTime.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
-            second: '2-digit'
+            second: '2-digit',
           })}
         </div>
       </div>
 
-      <div className="sidebar-section" style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="sidebar-section" style={availableSectionStyle}>
         <div className="sidebar-section-title">
           AVAILABLE ROOMS
           {selectedDate && (
@@ -64,29 +129,19 @@ export function Sidebar({
         </div>
 
         {!selectedDate ? (
-          <div style={{ fontSize: '12px', color: '#8d4b3e', opacity: 0.7, marginTop: '10px' }}>
-            Select a date
-          </div>
+          <div style={noDateStyle}>Select a date</div>
         ) : (
           <div style={{ marginTop: '12px' }}>
             {availableRooms.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
+              <div style={roomsGridStyle}>
                 {availableRooms.map((room) => (
-                  <div key={room} style={{
-                    background: '#F4EFEA',
-                    padding: '6px',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                    fontWeight: '800',
-                    color: '#C73A4A',
-                    fontSize: '12px'
-                  }}>{room}</div>
+                  <div key={room} style={roomStyle}>
+                    {room}
+                  </div>
                 ))}
               </div>
             ) : (
-              <div style={{ color: '#d85c5c', fontSize: '12px', fontWeight: 'bold' }}>
-                No rooms available
-              </div>
+              <div style={notAvailableStyle}>No rooms available</div>
             )}
           </div>
         )}
@@ -99,58 +154,24 @@ export function Sidebar({
           <div style={{ color: '#C73A4A', fontWeight: '900', fontSize: '16px', marginBottom: '6px' }}>
             Pending Request
           </div>
+
           {Object.entries(events).map(([date, dateEvents]) =>
             dateEvents.map((event, idx) => (
-              <div key={`${date}-${idx}`} style={{
-                background: 'white',
-                padding: '8px',
-                borderRadius: '12px',
-                marginBottom: '6px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
-                <div style={{ fontWeight: 'bold', color: '#8b1538', fontSize: '11px' }}>
-                  {event.details.labRoom}
-                </div>
-                <div style={{ fontSize: '10px', color: '#555' }}>
-                  {event.details.name}
-                </div>
-                <div style={{ fontSize: '9px', color: '#999', marginBottom: '4px' }}>
-                  {date} • {event.time}
-                </div>
+              <div key={`${date}-${idx}`} style={bookingCardStyle}>
+                <div style={bookingLabStyle}>{event.details.labRoom}</div>
+                <div style={bookingNameStyle}>{event.details.name}</div>
+                <div style={bookingMetaStyle}>{date} • {event.time}</div>
 
                 <div style={{ display: 'flex', gap: '4px', justifyContent: 'flex-end' }}>
-                  <button
-                    onClick={() => onApprove(date, idx)}
-                    style={{
-                      border: 'none',
-                      background: '#22c55e',
-                      color: 'white',
-                      borderRadius: '4px',
-                      padding: '2px 6px',
-                      cursor: 'pointer',
-                      fontSize: '10px'
-                    }}
-                  >✓</button>
-                  <button
-                    onClick={() => onRemove(date, idx)}
-                    style={{
-                      border: 'none',
-                      background: '#ef4444',
-                      color: 'white',
-                      borderRadius: '4px',
-                      padding: '2px 6px',
-                      cursor: 'pointer',
-                      fontSize: '10px'
-                    }}
-                  >✕</button>
+                  <button onClick={() => onApprove(date, idx)} style={approveBtnStyle}>✓</button>
+                  <button onClick={() => onRemove(date, idx)} style={removeBtnStyle}>✕</button>
                 </div>
               </div>
             ))
           )}
+
           {Object.keys(events).length === 0 && (
-            <div style={{ fontSize: '11px', color: '#2B0B10', opacity: 0.6 }}>
-              No pending requests
-            </div>
+            <div style={{ fontSize: '11px', color: '#2B0B10', opacity: 0.6 }}>No pending requests</div>
           )}
         </div>
 
@@ -158,29 +179,17 @@ export function Sidebar({
           <div style={{ color: '#C73A4A', fontWeight: '900', fontSize: '16px', marginBottom: '6px' }}>
             Previous Bookings
           </div>
+
           {previousBookings.map((booking, idx) => (
-            <div key={idx} style={{
-              background: '#F4EFEA',
-              padding: '8px',
-              borderRadius: '12px',
-              marginBottom: '4px',
-              fontSize: '10px'
-            }}>
-              <div style={{ fontWeight: 'bold', color: '#333' }}>
-                {booking.details.labRoom}
-              </div>
-              <div style={{ color: '#f70000ff' }}>
-                {booking.details.name}
-              </div>
-              <div style={{ color: '#ffa600ff' }}>
-                {booking.date}
-              </div>
+            <div key={idx} style={previousBookingStyle}>
+              <div style={{ fontWeight: 'bold', color: '#333' }}>{booking.details.labRoom}</div>
+              <div style={{ color: '#f70000ff' }}>{booking.details.name}</div>
+              <div style={{ color: '#ffa600ff' }}>{booking.date}</div>
             </div>
           ))}
+
           {previousBookings.length === 0 && (
-            <div style={{ fontSize: '11px', color: '#2B0B10', opacity: 0.6 }}>
-              No history
-            </div>
+            <div style={{ fontSize: '11px', color: '#2B0B10', opacity: 0.6 }}>No history</div>
           )}
         </div>
       </div>
