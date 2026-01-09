@@ -7,6 +7,7 @@ import org.example.labkoto.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReportService {
@@ -28,12 +29,39 @@ public class ReportService {
         report.setReport(reportContent);
         report.setStatus("pending");
 
-        return  reportRepository.save(report);
+        return reportRepository.save(report);
     }
 
-    public List<Report> getAllReports()
-    {
+    public List<Report> getAllReports() {
         return reportRepository.findAll();
+    }
+
+    public List<Report> getReportsByUser(Integer userId) {
+        return reportRepository.findByUserId(userId);
+    }
+
+    public List<Report> getReportsByStatus(String status) {
+        return reportRepository.findByStatus(status);
+    }
+
+    public Optional<Report> getReportById(Integer reportId) {
+        return reportRepository.findById(reportId);
+    }
+
+    public Report updateReportStatus(Integer reportId, String status, String adminResponse) {
+        Report report = reportRepository.findById(reportId)
+            .orElseThrow(() -> new RuntimeException("Report not found"));
+
+        report.setStatus(status);
+        if (adminResponse != null && !adminResponse.isBlank()) {
+            report.setAdminResponse(adminResponse);
+        }
+        return reportRepository.save(report);
+    }
+
+    public void deleteReport(Integer id)
+    {
+        reportRepository.deleteById(id);
     }
 }
 
