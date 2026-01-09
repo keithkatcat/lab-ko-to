@@ -83,13 +83,188 @@ const LoginSignup = ({onLoginSuccess}) => {
             } else {
                 setErrorMessage(data.message || 'Login failed. Please check your credentials.');
             }
-        } catch (error) {
-            setErrorMessage('Unable to connect to server. Please try again later.');
-            console.error('Login error:', error);
-        } finally {
-            setIsLoading(false);
+          }, 1000);
+        } else {
+          const errorData = await userResponse.json().catch(() => ({}));
+          console.error('Failed to fetch user data:', userResponse.status, errorData);
+          setErrorMessage(`Failed to retrieve user information. Status: ${userResponse.status}`);
         }
-    };
+      } else {
+        setErrorMessage(data.message || 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      setErrorMessage('Unable to connect to server. Please try again later.');
+      console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+    
+    try {
+      const response = await fetch('http://localhost:9090/api/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: signupData.username,
+          email: signupData.email,
+          password: signupData.password,
+          accountType: selectedRole === 'user' ? 'student' : 'admin'
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setSuccessMessage('Account created successfully! Please login.');
+        console.log('Signup successful!', data);
+        setTimeout(() => {
+          setIsSignup(false);
+          setSuccessMessage('');
+        }, 2000);
+      } else {
+        setErrorMessage(data.message || 'Signup failed. Please try again.');
+      }
+    } catch (error) {
+      setErrorMessage('Unable to connect to server. Please try again later.');
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const switchToSignup = (e) => {
+    e.preventDefault();
+    setIsSignup(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+  };
+
+  const switchToLogin = (e) => {
+    e.preventDefault();
+    setIsSignup(false);
+    setErrorMessage('');
+    setSuccessMessage('');
+  };
+
+  const handleRoleSelect = (role) => {
+    setSelectedRole(role);
+  };
+
+  const goBackToRoleSelect = () => {
+    setSelectedRole(null);
+    setIsSignup(false);
+    setErrorMessage('');
+    setSuccessMessage('');
+  };
+
+  return (
+    <div className="page-wrapper">
+      <div className="image-section">
+        <img src={pylonImage} alt="PUP Pylon" />
+      </div>
+
+      <div className="form-section">
+        {selectedRole === null ? (
+          <div className="role-selection-container">
+            <div className="title-section">
+              <h1>Lab Ko 'To</h1>
+              <p>PUP CCIS Online Laboratory Scheduling System</p>
+            </div>
+            <h2>I am a...</h2>
+            <div className="role-buttons">
+              <button 
+                className="role-btn user-btn" 
+                onClick={() => handleRoleSelect('user')}
+              >
+                <i className="fa-solid fa-users"></i>
+                <span>Student/Professor</span>
+              </button>
+              <button 
+                className="role-btn admin-btn" 
+                onClick={() => handleRoleSelect('admin')}
+              >
+                <i className="fa-solid fa-user-shield"></i>
+                <span>Admin</span>
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className={`login-container ${isSignup ? 'active' : ''}`}>
+            
+            <button className="back-to-role" onClick={goBackToRoleSelect}>
+              <i className="fa-solid fa-arrow-left"></i> Change Role
+            </button>
+
+            <div className="curved-shape"></div>
+            <div className="curved-shape1"></div>
+
+            {/* LOGIN FORM */}
+            <div className="form-box Login">
+              <h2 className="animation" style={{ '--D': 0 }}>
+                Welcome Back!
+              </h2>
+
+              {errorMessage && !isSignup && (
+                <div className="error-message animation" style={{ '--D': 0.5 }}>
+                  {errorMessage}
+                </div>
+              )}
+
+              {successMessage && !isSignup && (
+                <div className="success-message animation" style={{ '--D': 0.5 }}>
+                  {successMessage}
+                </div>
+              )}
+
+              <form onSubmit={handleLoginSubmit}>
+                <div className="input-box animation" style={{ '--D': 1 }}>
+                  <input 
+                    type="email" 
+                    className="input" 
+                    required 
+                    value={loginData.email}
+                    onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                    disabled={isLoading}
+                  />
+                  <label>Email</label>
+                  <i className="fa-solid fa-envelope"></i>
+                </div>
+
+                <div className="input-box animation" style={{ '--D': 2 }}>
+                  <input 
+                    type="password" 
+                    className="input" 
+                    required 
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                    disabled={isLoading}
+                  />
+                  <label>Password</label>
+                  <i className="fa-solid fa-key"></i>
+                </div>
+
+                <div className="input-box animation" style={{ '--D': 3 }}>
+                  <button type="submit" className="btn" disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
+                  </button>
+                </div>
+
+                <div className="regi-link animation" style={{ '--D': 4 }}>
+                  <p>
+                    Don't have an account?{' '}
+                    <a href="#" onClick={switchToSignup}>
+                      Create One!
+                    </a>
+                  </p>
+                </div>
+              </form>
+            </div>
 
     const handleSignupSubmit = async (e) => {
         e.preventDefault();
