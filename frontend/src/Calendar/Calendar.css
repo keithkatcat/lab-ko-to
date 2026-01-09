@@ -49,31 +49,257 @@
 }
 
 .calendar-day:hover {
-  background: #fff0eb;
+    background: #fff0eb;
+    border-color: #facccc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(136, 0, 21, 0.1);
 }
 
 .calendar-day.empty {
   background: transparent;
 }
 
+.calendar-day.booked {
+    background: #ffe8e8;
+    border-color: #ffcccc;
+}
+
+.calendar-day.booked:hover {
+    background: #ffd6d6;
+    border-color: #ffaaaa;
+}
+
 .day-number {
   font-weight: bold;
   color: #2B0B10;
-  margin-bottom: 3px;
-  font-size: 13px;
+  margin-bottom: 6px;
+  font-size: 14px;
+    line-height: 1px;
+}
+
+.calendar-day.today .day-number {
+    background: #880015;
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
 }
 
 .event {
-  font-size: 9px;
-  padding: 2px 5px;
-  border-radius: 5px;
-  margin-bottom: 2px;
-  color: white;
-  font-weight: bold;
+    font-size: 9px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    color: white;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
-.event-yellow {
-  background-color: #ffcc80;
-  color: #8d4b3e;
+.event:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
 
+/* Pending reservation */
+.event-pending {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #78350f;
+    border-left: 3px solid #d97706;
+}
+
+/* Approved reservation */
+.event-yellow,
+.event-approved {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #14532d;
+    border-left: 3px solid #15803d;
+}
+
+/* Denied reservation */
+.event-denied {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #7f1d1d;
+    border-left: 3px solid #b91c1c;
+}
+
+.event-time {
+    font-weight: 800;
+    font-size: 8px;
+    opacity: 0.9;
+}
+
+.event-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Scrollbar styling */
+.calendar-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+    margin-block: 10px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb {
+    background-color: #880015;
+    border-radius: 10px;
+    border: 2px solid #F4EFEA;
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #A52A2A;
+}
+
+/* Loading state */
+.calendar-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #880015;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* No events indicator */
+.no-events {
+    font-size: 10px;
+    color: #999;
+    font-style: italic;
+    padding: 4px;
+    text-align: center;
+}
+
+/* Multiple events indicator */
+.event-count {
+    font-size: 8px;
+    color: #666;
+    font-weight: 600;
+    padding: 2px 4px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    margin-top: 2px;
+    text-align: center;
+}
+
+/* Mobile responsive */
+@media (max-width: 1024px) {
+    .calendar {
+        gap: 8px;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 8px;
+    }
+
+    .day-number {
+        font-size: 12px;
+    }
+
+    .event {
+        font-size: 8px;
+        padding: 3px 5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-wrapper {
+        padding: 5px 10px;
+    }
+
+    .calendar {
+        gap: 5px;
+    }
+
+    .calendar-day {
+        min-height: 60px;
+        padding: 6px;
+        border-radius: 10px;
+    }
+
+    .calendar-header {
+        font-size: 10px;
+        padding: 6px 0;
+    }
+
+    .day-number {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .event {
+        font-size: 7px;
+        padding: 2px 4px;
+        margin-bottom: 2px;
+    }
+}
+
+/* Weekend styling (optional) */
+.calendar-day.weekend {
+    background: #fff9f5;
+}
+
+.calendar-day.weekend:hover {
+    background: #fff5ed;
+}
+
+/* Past dates styling (optional) */
+.calendar-day.past {
+    opacity: 0.6;
+}
+
+.calendar-day.past:hover {
+    opacity: 0.7;
+}
+
+/* Animation for new events */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.event {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Hover tooltip for events (optional enhancement) */
+.event-tooltip {
+    position: absolute;
+    background: #2B0B10;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.event:hover .event-tooltip {
+    opacity: 1;
 }
