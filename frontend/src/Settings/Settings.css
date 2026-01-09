@@ -1,0 +1,378 @@
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.settings-container {
+  position: relative;
+  background: #F4EFEA;
+  border: 5px solid #FACCCC;
+  border-radius: 25px;
+  width: 90%;
+  max-width: 380px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 25px 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.settings-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.settings-container::-webkit-scrollbar-track {
+  background: #F4EFEA;
+  border-radius: 10px;
+  margin: 60px 0 40px 0;
+}
+
+.settings-container::-webkit-scrollbar-thumb {
+  background: #c92a2a;
+  border-radius: 10px;
+  border: 2px solid #F4EFEA;
+}
+
+.settings-container::-webkit-scrollbar-thumb:hover {
+  background: #a02020;
+}
+
+.settings-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none !important;
+  outline: none !important;
+  font-size: 28px;
+  color: #374151;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: all 0.2s;
+}
+
+.settings-close:hover {
+  opacity: 1;
+  color: #c92a2a;
+  transform: scale(1.1);
+}
+
+.settings-close:active {
+  color: #a02020;
+  transform: scale(0.95);
+}
+
+.settings-header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid #FACCCC;
+}
+
+.settings-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 22px;
+  color: #374151;
+  margin-bottom: 5px;
+}
+
+.settings-subtitle {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+.settings-message {
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 18px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  text-align: center;
+}
+
+.settings-message.success {
+  background: #A8E6A1;
+  color: #1F5E1A;
+  border: 2px solid #7BC977;
+}
+
+.settings-message.error {
+  background: #FCA5A5;
+  color: #7F1D1D;
+  border: 2px solid #F87171;
+}
+
+.settings-section {
+  margin-bottom: 25px;
+}
+
+.settings-section-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.settings-current-email {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 2px solid #FACCCC;
+  border-radius: 8px;
+}
+
+.settings-form-group {
+  margin-bottom: 14px;
+}
+
+.settings-label {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.settings-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #FACCCC;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  background: #fff;
+  color: #374151;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.settings-input:focus {
+  outline: none;
+  border-color: #F4A6A6;
+  box-shadow: 0 0 0 3px rgba(250, 204, 204, 0.2);
+}
+
+.settings-input::placeholder {
+  color: #9CA3AF;
+}
+
+.settings-input:disabled {
+  background: #F3F4F6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+textarea.settings-input {
+  height: 120px;
+  resize: none;
+  overflow-y: auto;
+}
+
+textarea.settings-input::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea.settings-input::-webkit-scrollbar-track {
+  background: #F4EFEA;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+textarea.settings-input::-webkit-scrollbar-thumb {
+  background: #c92a2a;
+  border-radius: 10px;
+  border: 1px solid #F4EFEA;
+}
+
+textarea.settings-input::-webkit-scrollbar-thumb:hover {
+  background: #a02020;
+}
+
+.settings-button {
+  width: 100%;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.settings-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-save-btn {
+  background: #FACCCC;
+  color: #374151;
+}
+
+.settings-save-btn:hover:not(:disabled) {
+  background: #A8E6A1;
+  transform: translateY(-2px);
+}
+
+.settings-save-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.settings-danger-zone {
+  background: #FEF2F2;
+  border: 2px solid #FCA5A5;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.settings-danger-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 15px;
+  color: #7F1D1D;
+  margin-bottom: 8px;
+}
+
+.settings-danger-description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  color: #991B1B;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.settings-delete-btn {
+  background: #FCA5A5;
+  color: #7F1D1D;
+}
+
+.settings-delete-btn:hover:not(:disabled) {
+  background: #EE9999;
+  transform: translateY(-2px);
+}
+
+.settings-delete-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.settings-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+}
+
+.settings-confirm-dialog {
+  background: #F4EFEA;
+  border: 5px solid #FACCCC;
+  border-radius: 20px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.settings-confirm-title {
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 19px;
+  color: #7F1D1D;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.settings-confirm-message {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  color: #374151;
+  margin-bottom: 18px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.settings-confirm-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.settings-cancel-btn,
+.settings-confirm-btn {
+  flex: 1;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.settings-cancel-btn {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+.settings-cancel-btn:hover:not(:disabled) {
+  background: #D1D5DB;
+  transform: translateY(-2px);
+}
+
+.settings-confirm-btn {
+  background: #FCA5A5;
+  color: #7F1D1D;
+}
+
+.settings-confirm-btn:hover:not(:disabled) {
+  background: #EE9999;
+  transform: translateY(-2px);
+}
+
+.settings-cancel-btn:disabled,
+.settings-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    max-width: 340px;
+    padding: 20px 18px;
+  }
+
+  .settings-confirm-dialog {
+    padding: 20px;
+    max-width: 320px;
+  }
+
+  .settings-confirm-buttons {
+    flex-direction: column;
+  }
+
+  .settings-cancel-btn,
+  .settings-confirm-btn {
+    width: 100%;
+  }
+}
