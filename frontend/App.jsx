@@ -38,11 +38,9 @@ function App() {
     timeRequested: ''
   });
 
-  // Notification state
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // User profile and menu state
   const [isDropdownOpen, setIsDropdownOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -50,7 +48,6 @@ function App() {
   const [userName, setUserName] = useState('Fname Lname');
   const [userEmail, setUserEmail] = useState('user@example.com');
 
-  // Fetch user data on mount
   useEffect(() => {
     fetchUserData();
   }, []);
@@ -94,7 +91,6 @@ function App() {
     fetchUserData();
   };
 
-  // Calculate available rooms
   const availableRooms = useMemo(() => {
     if (!selectedDate) return allLabRooms;
     const dayEvents = events[selectedDate] || [];
@@ -102,13 +98,11 @@ function App() {
     return allLabRooms.filter(room => !bookedRoomNames.includes(room));
   }, [selectedDate, events]);
 
-  // Update current time every second
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // Notification creator
   const createNotification = (message, status) => {
     const newNotif = {
       id: Date.now(),
@@ -120,7 +114,6 @@ function App() {
     setUnreadCount(prev => prev + 1);
   };
 
-  // Booking handlers
   const handleAddEvent = (newEvent) => {
     const existingEvents = events[selectedDate] || [];
     const conflictingBooking = existingEvents.find(event =>
@@ -185,7 +178,6 @@ function App() {
  const handleOpenProfile = () => {
   console.log('=== Opening Profile ===');
   setIsDropdownOpen(false);
-  // Use a slightly longer delay to ensure dropdown fully closes
   setTimeout(() => {
     console.log('Setting isProfileOpen to true');
     setIsProfileOpen(true);
@@ -210,7 +202,6 @@ const handleOpenReport = () => {
   }, 100);
 };
 
-  // Debug: Log modal states
   useEffect(() => {
     console.log('Modal States:', {
       isProfileOpen,
@@ -221,7 +212,6 @@ const handleOpenReport = () => {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
-      {/* Dropdown Menu */}
       <DropdownMenu 
         isOpen={isDropdownOpen}
         setIsOpen={setIsDropdownOpen}
@@ -232,7 +222,6 @@ const handleOpenReport = () => {
         onReportProblem={handleOpenReport}
       />
 
-      {/* Main Calendar Container */}
       <div className="container">
         <Sidebar
           currentTime={currentTime}
@@ -277,7 +266,6 @@ const handleOpenReport = () => {
         </div>
       </div>
 
-      {/* Profile and Settings Modals */}
       {isProfileOpen && (
         <ViewProfile 
           isOpen={isProfileOpen}
@@ -311,5 +299,6 @@ const handleOpenReport = () => {
     </div>
   );
 }
+
 
 export default App;
