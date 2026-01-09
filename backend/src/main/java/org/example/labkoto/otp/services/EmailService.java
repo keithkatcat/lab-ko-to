@@ -41,7 +41,8 @@ public class EmailService {
         message.setSubject("Your OTP Code");
         message.setText(
             "Hello,\n\nYour OTP code is: " + otp +
-                "\nThis code will expire in 5 minutes.\n\nLab Reservation System"
+                "\nThis code will expire in 5 minutes.\n\nLab Reservation System" +
+                "\n\nThis is an automatically generated email please do not reply"
                        );
 
         Transport.send(message);
