@@ -687,7 +687,9 @@ Authorization: Bearer <jwt_token>
   "date": "2026-01-05",
   "startTime": "09:00",
   "endTime": "11:00",
-  "purpose": "Thesis defense"
+  "purpose": "Thesis defense",
+  "program": "Computer Science",
+  "section": "3-2"
 }
 ```
 
