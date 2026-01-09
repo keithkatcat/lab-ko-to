@@ -77,15 +77,16 @@
   transition: background 0.2s ease, border 0.2s ease;
   position: relative;
   z-index: 100;
-  border: 2px solid transparent; /* Transparent border by default */
+  border: 2px solid transparent; 
 }
 
 .user-profile-circle:hover {
-  background: #e0e0e0; /* Match notification bell hover */
+  background: #e0e0e0; 
 }
 
 .user-profile-circle img,
 .user-profile-circle svg {
-  width: 15px; /* Changed from 24px to 30px */
-  height: 15px; /* Changed from 24px to 30px */
+  width: 15px; 
+  height: 15px; 
+
 }
