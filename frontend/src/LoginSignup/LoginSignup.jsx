@@ -45,7 +45,7 @@ const LoginSignup = ({ onLoginSuccess }) => {
   
       // Call the onLoginSuccess callback after 1 second
       setTimeout(() => {
-        if (props.onLoginSuccess) {
+        if (onLoginSuccess) {
           onLoginSuccess();
         }
       }, 1000);
