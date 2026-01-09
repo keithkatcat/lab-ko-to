@@ -5,7 +5,10 @@
   padding: 10px 20px;
   box-sizing: border-box;
   overflow-y: auto;
-  max-height: calc(100vh - 180px);
+  flex: 1;
+  /* Added - allows calendar to take available space */
+  min-height: 0;
+  /* Added - prevents overflow */
 }
 
 .calendar-headers {
