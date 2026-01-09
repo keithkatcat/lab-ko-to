@@ -25,16 +25,18 @@ public class SecurityConfig {
                 var corsConfig = new org.springframework.web.cors.CorsConfiguration();
                 corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:3000",
                                                                "http://localhost:5173",
-                                                               "http://localhost:4200"));
+                                                               "http://localhost:4200",
+                                                               "http://127.0.0.1:5173",
+                                                               "https://lab-ko-to.vercel.app"));
                 corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 corsConfig.setAllowedHeaders(java.util.List.of("*"));
                 corsConfig.setAllowCredentials(true);
                 return corsConfig;
             }))
             .authorizeHttpRequests(auth -> auth.
-                                       requestMatchers("/api/auth/login", "/api/user/register", "/api/otp/**").permitAll()
-                                       .anyRequest().authenticated()
-                                  )
+                requestMatchers("/api/auth/login", "/api/user/register", "/api/otp/**", "/api/user/me").permitAll()
+                .anyRequest().authenticated()
+            )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

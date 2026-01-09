@@ -113,6 +113,41 @@ This API provides endpoints for managing laboratory reservations, user accounts,
 
 ---
 
+### Get Current User
+
+**Endpoint:** `GET /api/user/me`
+
+**Description:** Get information about the currently logged-in user
+
+**Authentication Required:** ✅ Yes
+
+**Headers:**
+```
+Authorization: Bearer <jwt_token>
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "john@example.com",
+  "accountType": "student",
+  "emailVerified": true
+}
+```
+
+**Response (401 Unauthorized):**
+```json
+{}
+```
+
+**Notes:**
+- Returns information based on the JWT token
+- Password is never included in the response
+- No user ID needed in the URL - extracted from token
+
+---
 ### Get User by ID
 
 **Endpoint:** `GET /api/user/{id}`
