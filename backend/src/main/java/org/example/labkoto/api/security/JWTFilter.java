@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
-        if (path.equals("/api/auth/login") || path.equals("/api/user/register") || path.equals("/api/reports")) {
+        if (path.equals("/api/auth/login") || path.equals("/api/user/register")) {
             filterChain.doFilter(request, response);
             return;
         }
