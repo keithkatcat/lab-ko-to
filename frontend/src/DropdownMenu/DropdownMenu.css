@@ -1,7 +1,6 @@
-/* Container positions the dropdown fixed to the screen */
 .dropdown-container {
   position: fixed;
-  top: 100px; /* Adjust this based on your header height */
+  top: 100px;
   right: 50px;
   z-index: 9999;
 }
@@ -108,4 +107,5 @@
   font-family: 'Roboto', sans-serif;
   font-weight: 700;
   font-size: 13px;
+
 }
