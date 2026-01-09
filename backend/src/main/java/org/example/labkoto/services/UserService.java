@@ -16,13 +16,12 @@ public class UserService {
 
 
     // Constructor injection (preferred)
-    public UserService(UserRepository userRepository,  PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User register(User user)
-    {
+    public User register(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -45,15 +44,18 @@ public class UserService {
     // Update existing user
     public User updateUser(User user) {
         User existing = userRepository.findById(user.getId())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("User with " + user.getId() + " id not found"));
 
-        if(user.getEmail() != null && !user.getEmail().isBlank()){
-        existing.setEmail(user.getEmail());}
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            existing.setEmail(user.getEmail());
+        }
 
-        if(user.getUsername() != null && !user.getUsername().isBlank()){
-        existing.setUsername(user.getUsername());}
-        if(user.getAccountType() != null && !user.getAccountType().isBlank()){
-        existing.setAccountType(user.getAccountType());}
+        if (user.getUsername() != null && !user.getUsername().isBlank()) {
+            existing.setUsername(user.getUsername());
+        }
+        if (user.getAccountType() != null && !user.getAccountType().isBlank()) {
+            existing.setAccountType(user.getAccountType());
+        }
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
             existing.setPassword(passwordEncoder.encode(user.getPassword()));

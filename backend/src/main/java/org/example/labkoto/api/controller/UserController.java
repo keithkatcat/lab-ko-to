@@ -65,7 +65,7 @@ public class UserController {
             currentUser.setUsername(request.getUsername());
         }
         if (request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
-            if (request.getOldPassword() != null || request.getOldPassword().isBlank()) {
+            if (request.getOldPassword() == null || request.getOldPassword().isBlank()) {
                 return ResponseEntity.badRequest()
                     .body(new ErrorResponse("Old Password or New Password Missing"));
             }

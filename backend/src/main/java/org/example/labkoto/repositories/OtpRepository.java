@@ -14,6 +14,6 @@ public interface OtpRepository extends JpaRepository<Otp, Integer> {
         String token,
         String purpose,
         LocalDateTime currentTime
-                                                                             )
-;
+    )
+        ;
 }

@@ -66,7 +66,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.accountType = accountType;
+        this.accountType = (perm == 1) ? "admin" : "student";
     }
 
 
