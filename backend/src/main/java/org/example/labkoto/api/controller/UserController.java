@@ -100,4 +100,27 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    // Get current logged-in user's information
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extract token from Authorization header
+            String token = authHeader.substring(7); // Remove "Bearer "
+
+            // Extract email from JWT token
+            String email = jWTUtility.extractEmail(token);
+
+            // Find user by email
+            Optional<User> userOptional = userService.findByEmail(email);
+
+            if (userOptional.isPresent()) {
+                return ResponseEntity.ok(userOptional.get());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
+    }
 }
