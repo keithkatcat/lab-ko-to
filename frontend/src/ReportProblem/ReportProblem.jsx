@@ -37,21 +37,24 @@ const ReportProblem = ({ isOpen, onClose }) => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          userId: userId,
-          description: description.trim(),
-          status: 'pending',
-          createdAt: new Date().toISOString()
+          userId: parseInt(userId), // Ensure userId is a number
+          report: description.trim() // Changed from 'description' to 'report'
         })
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit report');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to submit report');
       }
 
       setSubmitted(true);
+      setDescription(''); // Clear the form after successful submission
     } catch (error) {
       console.error('Error submitting report:', error);
-      setMessage({ type: 'error', text: 'Failed to submit report. Please try again.' });
+      setMessage({ 
+        type: 'error', 
+        text: error.message || 'Failed to submit report. Please try again.' 
+      });
     } finally {
       setLoading(false);
     }

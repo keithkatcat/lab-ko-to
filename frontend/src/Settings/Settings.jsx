@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Settings.css';
 
-const Settings = ({ isOpen, onClose, userId }) => {
+const Settings = ({ isOpen, onClose }) => {
   const [currentEmail, setCurrentEmail] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -59,37 +59,25 @@ const Settings = ({ isOpen, onClose, userId }) => {
     try {
       const token = localStorage.getItem('token');
       
-      const loginResponse = await fetch('http://localhost:9090/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: currentEmail,
-          password: currentPassword
-        })
-      });
-
-      if (!loginResponse.ok) {
-        throw new Error('Current password is incorrect');
-      }
-
-      const response = await fetch(`http://localhost:9090/api/user/${userId}`, {
+      const response = await fetch('http://localhost:9090/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          email: newEmail
+          email: newEmail,
+          oldPassword: currentPassword
         })
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to change email');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change email');
       }
 
+      await response.json(); // Consume the response
+      
       setCurrentEmail(newEmail);
       localStorage.setItem('userEmail', newEmail);
       setNewEmail('');
@@ -126,35 +114,21 @@ const Settings = ({ isOpen, onClose, userId }) => {
     try {
       const token = localStorage.getItem('token');
       
-      const loginResponse = await fetch('http://localhost:9090/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: currentEmail,
-          password: currentPassword
-        })
-      });
-
-      if (!loginResponse.ok) {
-        throw new Error('Current password is incorrect');
-      }
-
-      const response = await fetch(`http://localhost:9090/api/user/${userId}`, {
+      const response = await fetch('http://localhost:9090/api/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          password: newPassword
+          oldPassword: currentPassword,
+          newPassword: newPassword
         })
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Failed to change password');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to change password');
       }
 
       setCurrentPassword('');
@@ -177,12 +151,9 @@ const Settings = ({ isOpen, onClose, userId }) => {
 
     setLoading(true);
     try {
-      
       setMessage({ type: 'success', text: 'Deletion request submitted. An admin will review your request.' });
       setShowDeleteConfirm(false);
       setDeleteReason('');
-      
-      
     } catch (error) {
       console.error('Error requesting account deletion:', error);
       setMessage({ type: 'error', text: 'Failed to submit deletion request. Please try again.' });
