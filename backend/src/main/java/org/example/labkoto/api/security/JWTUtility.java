@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -12,10 +13,14 @@ import java.util.Map;
 
 @Component
 public class JWTUtility {
-    private final String secretkey = "labkotoadminkeylabkotoadminkey123";
+    private final String secretkey;
     private final long ExpirationTime = 1000 * 60 * 60;
+    private final Key key;
 
-    private final Key key = Keys.hmacShaKeyFor(secretkey.getBytes());
+    public JWTUtility(@Value ("${jwt.secret}") String secretkey) {
+        this.secretkey = secretkey;
+        this.key = Keys.hmacShaKeyFor(secretkey.getBytes());
+    }
 
     public String GenerateToken(String email, int perm) {
         return Jwts.builder()
@@ -45,8 +50,7 @@ public class JWTUtility {
         try {
             Jwts.parser().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        }
-        catch (JwtException e) {
+        } catch (JwtException e) {
             return false;
         }
     }
