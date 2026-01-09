@@ -15,6 +15,7 @@
 .header-right {
   display: flex;
   align-items: center;
+  position: relative;  /* ADD THIS LINE */
 }
 
 .logo {
