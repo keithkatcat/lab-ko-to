@@ -1,8 +1,11 @@
-import React from 'react';
-import './MainContent/MainContent.css';
+import React, { useState } from 'react';
+import '../MainContent/MainContent.css';
 import './Header.css';
+import DropdownMenu from '../DropdownMenu/DropdownMenu.jsx';
 
 export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMonth, setCurrentYear }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -56,13 +59,26 @@ export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMont
       </div>
 
       <div className="header-right">
-        <div className="user-profile-circle">
-          👤
+        <div 
+          className="user-profile-circle" 
+          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          style={{ cursor: 'pointer' }}
+        >
+          
         </div>
+        
+        <DropdownMenu 
+          isOpen={isDropdownOpen}
+          setIsOpen={setIsDropdownOpen}
+          userName="John Doe"
+          userEmail="john@example.com"
+          onViewProfile={() => console.log('View Profile')}
+          onSettings={() => console.log('Settings')}
+          onReportProblem={() => console.log('Report Problem')}
+        />
       </div>
     </div>
   );
 }
 
 export default Header;
-
