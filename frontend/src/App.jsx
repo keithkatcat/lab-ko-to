@@ -16,10 +16,10 @@ const allLabRooms = [
 const todayKey = new Date().toISOString().split('T')[0];
 
 function App() {
-  // Check if user is already logged in (from localStorage)
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('token') !== null;
-  });
+  // Authentication state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -28,6 +28,9 @@ function App() {
   const [events, setEvents] = useState({});
   const [previousBookings, setPreviousBookings] = useState([]);
   const [bookedDates] = useState([]);
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey);
@@ -38,7 +41,9 @@ function App() {
     labRoom: '',
     purpose: '',
     dateRequested: '',
-    timeRequested: ''
+    timeRequested: '',
+    startTime: '',
+    endTime: ''
   });
 
   const availableRooms = useMemo(() => {
@@ -48,14 +53,62 @@ function App() {
     return allLabRooms.filter(room => !bookedRoomNames.includes(room));
   }, [selectedDate, events]);
 
+  // Check for existing authentication on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('userRole');
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+    
+    if (token && role && userId && userName) {
+      setIsAuthenticated(true);
+      setUserRole(role);
+      setAuthToken(token);
+    }
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   // Handle successful login
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
+  const handleLoginSuccess = (role) => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    const token = localStorage.getItem('token');
+    setAuthToken(token);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    // Clear all localStorage items
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userName');
+    
+    // Reset authentication state
+    setIsAuthenticated(false);
+    setUserRole(null);
+    setAuthToken(null);
+    
+    // Optional: Clear other app state
+    setEvents({});
+    setPreviousBookings([]);
+    setNotifications([]);
+    setUnreadCount(0);
+  };
+
+  const createNotification = (message, status) => {
+    const newNotif = {
+      id: Date.now(),
+      message: message,
+      status: status, 
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    setNotifications(prev => [newNotif, ...prev]);
+    setUnreadCount(prev => prev + 1);
   };
 
   const handleAddEvent = (newEvent) => {
@@ -66,7 +119,7 @@ function App() {
     );
 
     if (conflictingBooking) {
-      alert(`${newEvent.labRoom} is already booked at ${newEvent.timeRequested} on this date.`);
+      createNotification(`Conflict: ${newEvent.labRoom} is already taken.`, 'rejected');
       return;
     }
 
@@ -75,16 +128,18 @@ function App() {
     
     updatedEvents[selectedDate].push({
       time: newEvent.timeRequested,
-      title: `${newEvent.labRoom} - ${newEvent.name}`,
+      title: `PENDING: ${newEvent.labRoom}`,
       class: 'event-yellow',
       details: newEvent
     });
+
+    createNotification(`Request Sent: ${newEvent.labRoom} for ${newEvent.name}`, 'pending');
 
     setEvents(updatedEvents);
     setShowModal(false);
     setEventForm({
       name: '', program: '', section: '', labRoom: '',
-      purpose: '', dateRequested: '', timeRequested: ''
+      purpose: '', dateRequested: '', timeRequested: '', startTime: '', endTime: ''
     });
   };
 
@@ -92,6 +147,8 @@ function App() {
     const eventToApprove = events[date][index];
     setPreviousBookings(prev => [...prev, { ...eventToApprove, date }]);
     
+    createNotification(`Confirmed: ${eventToApprove.details.labRoom} booking approved!`, 'success');
+
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -99,6 +156,10 @@ function App() {
   };
 
   const handleRemove = (date, index) => {
+    const eventToRemove = events[date][index];
+    
+    createNotification(`Removed: Request for ${eventToRemove.details.labRoom} was cancelled.`, 'rejected');
+
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -111,12 +172,12 @@ function App() {
     setShowModal(true);
   };
 
-  // If not logged in, show LoginSignup
-  if (!isLoggedIn) {
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
     return <LoginSignup onLoginSuccess={handleLoginSuccess} />;
   }
 
-  // If logged in, show Dashboard
+  // Show main app if authenticated
   return (
     <div className="container">
       <Sidebar
@@ -136,6 +197,10 @@ function App() {
           currentYear={currentYear}
           setCurrentMonth={setCurrentMonth}
           setCurrentYear={setCurrentYear}
+          notifications={notifications}
+          unreadCount={unreadCount}
+          setUnreadCount={setUnreadCount}
+          onLogout={handleLogout}
         />
 
         <Calendar

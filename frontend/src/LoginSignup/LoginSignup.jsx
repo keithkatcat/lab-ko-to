@@ -23,6 +23,7 @@ const LoginSignup = ({ onLoginSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
+    setSuccessMessage('');
     
     try {
       const response = await fetch('http://localhost:9090/api/auth/login', {
@@ -36,20 +37,57 @@ const LoginSignup = ({ onLoginSuccess }) => {
 
       const data = await response.json();
       
-      if (response.ok) {
-      // Store JWT token
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userRole', selectedRole);
-      console.log('Login successful!', data);
-      setSuccessMessage('Login successful! Redirecting...');
-  
-      // Call the onLoginSuccess callback after 1 second
-      setTimeout(() => {
-        if (onLoginSuccess) {
-          onLoginSuccess();
+      console.log('Login response data:', data); // Debug: see what we get back
+      
+      if (response.ok && data.token) {
+        const token = data.token;
+        console.log('Token received:', token); // Debug: verify token exists
+        
+        // Get user details to extract user ID and role
+        const userResponse = await fetch('http://localhost:9090/api/user/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          
+          console.log('User data received:', userData); // Debug log
+          
+          // Admin verification check
+          if (selectedRole === 'admin' && userData.accountType !== 'admin') {
+            setErrorMessage('Access denied. Admin privileges required.');
+            return;
+          }
+          
+          // Student/Professor verification check
+          if (selectedRole === 'user' && userData.accountType === 'admin') {
+            setErrorMessage('Please use the Admin login option.');
+            return;
+          }
+          
+          // Store everything we need
+          localStorage.setItem('token', token);
+          localStorage.setItem('userId', userData.id);
+          localStorage.setItem('userRole', userData.accountType);
+          localStorage.setItem('userName', userData.username);
+          
+          console.log('Login successful!', userData);
+          setSuccessMessage('Login successful! Redirecting...');
+          
+          // Call the onLoginSuccess callback after 1 second
+          setTimeout(() => {
+            if (onLoginSuccess) {
+              onLoginSuccess(userData.accountType);
+            }
+          }, 1000);
+        } else {
+          const errorData = await userResponse.json().catch(() => ({}));
+          console.error('Failed to fetch user data:', userResponse.status, errorData);
+          setErrorMessage(`Failed to retrieve user information. Status: ${userResponse.status}`);
         }
-      }, 1000);
-    } else {
+      } else {
         setErrorMessage(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
@@ -74,7 +112,7 @@ const LoginSignup = ({ onLoginSuccess }) => {
           username: signupData.username,
           email: signupData.email,
           password: signupData.password,
-          accountType: selectedRole === 'student' ? 'student' : 'professor'
+          accountType: selectedRole === 'user' ? 'student' : 'admin'
         })
       });
 
@@ -139,18 +177,18 @@ const LoginSignup = ({ onLoginSuccess }) => {
             <h2>I am a...</h2>
             <div className="role-buttons">
               <button 
-                className="role-btn student-btn" 
-                onClick={() => handleRoleSelect('student')}
+                className="role-btn user-btn" 
+                onClick={() => handleRoleSelect('user')}
               >
-                <i className="fa-solid fa-user-graduate"></i>
-                <span>Student</span>
+                <i className="fa-solid fa-users"></i>
+                <span>Student/Professor</span>
               </button>
               <button 
-                className="role-btn faculty-btn" 
-                onClick={() => handleRoleSelect('faculty')}
+                className="role-btn admin-btn" 
+                onClick={() => handleRoleSelect('admin')}
               >
-                <i className="fa-solid fa-chalkboard-teacher"></i>
-                <span>Faculty</span>
+                <i className="fa-solid fa-user-shield"></i>
+                <span>Admin</span>
               </button>
             </div>
           </div>
