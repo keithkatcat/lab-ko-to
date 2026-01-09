@@ -15,7 +15,9 @@
 .header-right {
   display: flex;
   align-items: center;
-  padding-right: 40px;
+  gap: 20px;
+  position: relative;
+  z-index: 10;
 }
 
 .logo {
@@ -60,4 +62,31 @@
 .nav-arrow:hover {
   opacity: 0.9;
   transform: scale(1.02);
+}
+
+.user-profile-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #F4EFEA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 17px;
+  transition: background 0.2s ease, border 0.2s ease;
+  position: relative;
+  z-index: 100;
+  border: 2px solid transparent; 
+}
+
+.user-profile-circle:hover {
+  background: #e0e0e0; 
+}
+
+.user-profile-circle img,
+.user-profile-circle svg {
+  width: 15px; 
+  height: 15px; 
+
 }
