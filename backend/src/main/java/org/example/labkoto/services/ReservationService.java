@@ -70,13 +70,6 @@ public class ReservationService {
         reservation.setUser(user);
         reservation.setLab(lab);
 
-        if(reservation.getProgram() == null || reservation.getProgram().isEmpty()) {
-            reservation.setProgram(user.getProgram());
-        }
-        if (reservation.getSection() == null || reservation.getSection().isEmpty()) {
-            reservation.setSection(user.getSection());
-        }
-
         return reservationRepository.save(reservation);
     }
 

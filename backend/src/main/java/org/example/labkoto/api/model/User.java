@@ -28,12 +28,6 @@ public class User {
     @Column (name = "email_verified")
     private Boolean emailVerified = false;
 
-    @Column(name = "program")
-    private String program;
-
-    @Column(name = "section")
-    private String section;
-
     public String getAccountType() {
         if (accountType == null) {
             return "student";
@@ -125,20 +119,5 @@ public class User {
         this.emailVerified = emailVerified;
     }
 
-    public String getProgram() {
-        return program;
-    }
-
-    public void setProgram(String program) {
-        this.program = program;
-    }
-
-    public String getSection() {
-        return section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
-    }
 }
 

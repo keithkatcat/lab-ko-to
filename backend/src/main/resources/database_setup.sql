@@ -5,9 +5,7 @@ CREATE TABLE IF NOT EXISTS users
     email          TEXT NOT NULL UNIQUE,
     password       TEXT NOT NULL,
     account_type   TEXT NOT NULL CHECK (account_type IN ('student', 'professor', 'admin')),
-    email_verified INTEGER DEFAULT 0 CHECK (email_verified IN (0, 1)),
-    program        TEXT,
-    section        TEXT
+    email_verified INTEGER DEFAULT 0 CHECK (email_verified IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS labs
