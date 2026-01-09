@@ -61,14 +61,14 @@ public class User {
     public User() {
     }
 
-    public User(Integer id, Integer perm, String username, String email, String password) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.accountType = (perm == 1) ? "admin" : "student";
-    }
-
+//    public User(Integer id, Integer perm, String username, String email, String password) {
+//        this.id = id;
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//        this.accountType = (perm != null && perm == 1) ? "admin" : "student";
+//    }
+//
 
     public Integer getId() {
         return id;
