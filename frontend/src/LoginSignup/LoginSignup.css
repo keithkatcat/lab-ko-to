@@ -180,7 +180,8 @@ body {
     font-size: 16px;
 }
 
-.container {
+/* CHANGED: Renamed from .container to .login-container */
+.login-container {
     position: relative;
     width: 600px;
     height: 450px;
@@ -195,7 +196,7 @@ body {
     z-index: 10;
 }
 
-.container .form-box {
+.login-container .form-box {
     position: absolute;
     top: 0;
     width: 50%;
@@ -217,7 +218,7 @@ body {
     transition-delay: calc(.1s * var(--D));
 }
 
-.container.active .form-box.Login .animation {
+.login-container.active .form-box.Login .animation {
     transform: translateX(-120%);
     opacity: 0;
 }
@@ -234,7 +235,7 @@ body {
     transition-delay: calc(.1s * var(--D));
 }
 
-.container.active .form-box.Signup .animation {
+.login-container.active .form-box.Signup .animation {
     transform: translateX(0%);
     opacity: 1;
 }
@@ -389,7 +390,7 @@ body {
     opacity: 1;
 }
 
-.container.active .info-content.Login .animation {
+.login-container.active .info-content.Login .animation {
     transform: translateX(120%);
     opacity: 0;
 }
@@ -408,7 +409,7 @@ body {
     transition-delay: calc(.1s * var(--D));
 }
 
-.container.active .info-content.Signup .animation {
+.login-container.active .info-content.Signup .animation {
     transform: translateX(0%);
     opacity: 1;
     transition-delay: calc(.1s * var(--D));
@@ -429,7 +430,7 @@ body {
     opacity: 0.8;
 }
 
-.container .curved-shape {
+.login-container .curved-shape {
     position: absolute;
     right: 0;
     top: -5px;
@@ -441,11 +442,11 @@ body {
     transition: 1.5s ease;
 }
 
-.container.active .curved-shape {
+.login-container.active .curved-shape {
     transform: rotate(0deg) skewY(0deg);
 }
 
-.container .curved-shape1 {
+.login-container .curved-shape1 {
     position: absolute;
     left: 200px;
     top: 100%;
@@ -459,7 +460,7 @@ body {
     transition: 1.5s ease;
 }
 
-.container.active .curved-shape1 {
+.login-container.active .curved-shape1 {
     transform: rotate(-11deg) skewY(-41deg);
     transition-delay: .5s;
 }
@@ -499,7 +500,7 @@ body {
         flex: 1;
     }
 
-    .container {
+    .login-container {
         width: 95%;
         height: 500px;
         margin-left: 0;

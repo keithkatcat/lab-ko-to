@@ -155,7 +155,7 @@ const LoginSignup = ({ onLoginSuccess }) => {
             </div>
           </div>
         ) : (
-          <div className={`container ${isSignup ? 'active' : ''}`}>
+          <div className={`login-container ${isSignup ? 'active' : ''}`}>
             
             <button className="back-to-role" onClick={goBackToRoleSelect}>
               <i className="fa-solid fa-arrow-left"></i> Change Role
