@@ -76,7 +76,7 @@ const Settings = ({ isOpen, onClose }) => {
         throw new Error(errorData.message || 'Failed to change email');
       }
 
-      await response.json(); // Consume the response
+      await response.json(); 
       
       setCurrentEmail(newEmail);
       localStorage.setItem('userEmail', newEmail);
@@ -325,5 +325,6 @@ const Settings = ({ isOpen, onClose }) => {
     </>
   );
 };
+
 
 export default Settings;
