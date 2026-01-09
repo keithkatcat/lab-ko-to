@@ -1,8 +1,5 @@
-/* Remove all .dropdown-page wrapper references */
 .dropdown-container {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: relative;
   z-index: 9999;
 }
 
@@ -13,46 +10,40 @@
 
 .dropdown-wrapper .dropdown-button {
   all: unset;
-  background: transparent;
-  border: none;
-  outline: none;
+  background: #f4efea;
+  border: 2px solid #880015;
   cursor: pointer;
-  padding: 5px;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  overflow: hidden;
   box-sizing: border-box;
+  transition: transform 0.2s ease;
 }
 
 .dropdown-wrapper .dropdown-button:focus {
   outline: none;
-  border: none;
 }
 
 .dropdown-wrapper .dropdown-button:hover {
-  background: transparent;
-  border-color: transparent;
-  border: none;
-}
-
-.dropdown-wrapper .dropdown-button:active {
-  background: transparent;
+  transform: scale(1.05);
 }
 
 .dropdown-wrapper .dropdown-button .dropdown-avatar {
-  width: 30px;
-  height: 30px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 50%;
   display: block;
 }
 
 .dropdown-wrapper .dropdown-menu {
   position: absolute;
-  margin-top: 8px;
+  margin-top: 12px;
   background-color: #F4EFEA;
-  border: 5px solid #FACCCC; 
+  border: 5px solid #FACCCC;
   width: 250px;
   max-height: 337px;
   border-radius: 54px;
@@ -65,6 +56,7 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  z-index: 1000;
 }
 
 .dropdown-menu .dropdown-userinfo {
@@ -108,11 +100,6 @@
   box-sizing: border-box;
 }
 
-.dropdown-menu .dropdown-item:focus {
-  outline: none;
-  border: none;
-}
-
 .dropdown-menu .dropdown-item:first-child {
   margin-top: -12px;
 }
@@ -124,23 +111,6 @@
 
 .dropdown-menu .dropdown-item.hovered {
   background-color: rgba(133, 131, 131, 0.1);
-}
-
-.dropdown-menu .dropdown-item:hover {
-  border-color: transparent;
-  border: none;
-}
-
-.dropdown-menu .dropdown-item:active {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-menu .dropdown-item .dropdown-icon {
-  width: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
 }
 
 .dropdown-menu .dropdown-item .dropdown-icon img {
