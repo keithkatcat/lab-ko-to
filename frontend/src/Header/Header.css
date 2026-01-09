@@ -15,7 +15,7 @@
 .header-right {
   display: flex;
   align-items: center;
-  position: relative;  /* ADD THIS LINE */
+  padding-right: 40px;
 }
 
 .logo {
@@ -60,17 +60,4 @@
 .nav-arrow:hover {
   opacity: 0.9;
   transform: scale(1.02);
-}
-
-.user-profile-circle {
-  width: 45px;
-  height: 45px;
-  background-color: #F4EFEA;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  color: #ff2222;
-  cursor: pointer;
 }
