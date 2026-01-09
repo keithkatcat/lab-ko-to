@@ -6,6 +6,7 @@ import Sidebar from './Sidebar/Sidebar';
 import Header from './Header/Header';
 import Calendar from './Calendar/Calendar';
 import BookingModal from './BookingModal/BookingModal';
+import LoginSignup from './LoginSignup/LoginSignup';
 
 const allLabRooms = [
   'S501', 'S502', 'S503', 'S504', 'S505',
@@ -15,6 +16,11 @@ const allLabRooms = [
 const todayKey = new Date().toISOString().split('T')[0];
 
 function App() {
+  // Check if user is already logged in (from localStorage)
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('token') !== null;
+  });
+
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -22,9 +28,6 @@ function App() {
   const [events, setEvents] = useState({});
   const [previousBookings, setPreviousBookings] = useState([]);
   const [bookedDates] = useState([]);
-
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayKey);
@@ -35,9 +38,7 @@ function App() {
     labRoom: '',
     purpose: '',
     dateRequested: '',
-    timeRequested: '',
-    startTime: '',
-    endTime: ''
+    timeRequested: ''
   });
 
   const availableRooms = useMemo(() => {
@@ -52,15 +53,9 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const createNotification = (message, status) => {
-    const newNotif = {
-      id: Date.now(),
-      message: message,
-      status: status, 
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    setNotifications(prev => [newNotif, ...prev]);
-    setUnreadCount(prev => prev + 1);
+  // Handle successful login
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
   };
 
   const handleAddEvent = (newEvent) => {
@@ -71,7 +66,7 @@ function App() {
     );
 
     if (conflictingBooking) {
-      createNotification(`Conflict: ${newEvent.labRoom} is already taken.`, 'rejected');
+      alert(`${newEvent.labRoom} is already booked at ${newEvent.timeRequested} on this date.`);
       return;
     }
 
@@ -80,18 +75,16 @@ function App() {
     
     updatedEvents[selectedDate].push({
       time: newEvent.timeRequested,
-      title: `PENDING: ${newEvent.labRoom}`,
+      title: `${newEvent.labRoom} - ${newEvent.name}`,
       class: 'event-yellow',
       details: newEvent
     });
-
-    createNotification(`Request Sent: ${newEvent.labRoom} for ${newEvent.name}`, 'pending');
 
     setEvents(updatedEvents);
     setShowModal(false);
     setEventForm({
       name: '', program: '', section: '', labRoom: '',
-      purpose: '', dateRequested: '', timeRequested: '', startTime: '', endTime: ''
+      purpose: '', dateRequested: '', timeRequested: ''
     });
   };
 
@@ -99,8 +92,6 @@ function App() {
     const eventToApprove = events[date][index];
     setPreviousBookings(prev => [...prev, { ...eventToApprove, date }]);
     
-    createNotification(`Confirmed: ${eventToApprove.details.labRoom} booking approved!`, 'success');
-
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -108,10 +99,6 @@ function App() {
   };
 
   const handleRemove = (date, index) => {
-    const eventToRemove = events[date][index];
-    
-    createNotification(`Removed: Request for ${eventToRemove.details.labRoom} was cancelled.`, 'rejected');
-
     const updatedEvents = { ...events };
     updatedEvents[date].splice(index, 1);
     if (updatedEvents[date].length === 0) delete updatedEvents[date];
@@ -124,6 +111,12 @@ function App() {
     setShowModal(true);
   };
 
+  // If not logged in, show LoginSignup
+  if (!isLoggedIn) {
+    return <LoginSignup onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // If logged in, show Dashboard
   return (
     <div className="container">
       <Sidebar
@@ -143,9 +136,6 @@ function App() {
           currentYear={currentYear}
           setCurrentMonth={setCurrentMonth}
           setCurrentYear={setCurrentYear}
-          notifications={notifications}
-          unreadCount={unreadCount}
-          setUnreadCount={setUnreadCount}
         />
 
         <Calendar

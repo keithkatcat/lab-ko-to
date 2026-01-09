@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './LoginSignup.css';
 import pylonImage from '../assets/pylonn.png';
 
-const LoginSignup = () => {
+const LoginSignup = ({ onLoginSuccess }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
   
@@ -37,16 +37,19 @@ const LoginSignup = () => {
       const data = await response.json();
       
       if (response.ok) {
-        // Store JWT token
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userRole', selectedRole);
-        console.log('Login successful!', data);
-        setSuccessMessage('Login successful! Redirecting...');
-        // TODO: Redirect to dashboard after 1 second
-        // setTimeout(() => {
-        //   window.location.href = '/dashboard';
-        // }, 1000);
-      } else {
+      // Store JWT token
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userRole', selectedRole);
+      console.log('Login successful!', data);
+      setSuccessMessage('Login successful! Redirecting...');
+  
+      // Call the onLoginSuccess callback after 1 second
+      setTimeout(() => {
+        if (props.onLoginSuccess) {
+          onLoginSuccess();
+        }
+      }, 1000);
+    } else {
         setErrorMessage(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
