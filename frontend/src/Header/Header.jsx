@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../MainContent/MainContent.css';
 import './Header.css';
-import DropdownMenu from '../DropdownMenu/DropdownMenu.jsx';
+import NotificationBell from '../NotificationBell/NotificationBell.jsx';
 
-export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMonth, setCurrentYear }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
+export function Header({ 
+  labkoto_logo, 
+  currentMonth, 
+  currentYear, 
+  setCurrentMonth, 
+  setCurrentYear,
+  setIsDropdownOpen,  
+  notifications = [],
+  unreadCount = 0,
+  setUnreadCount
+}) {
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -59,18 +67,26 @@ export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMont
       </div>
 
       <div className="header-right">
-        <DropdownMenu
-          isOpen={isDropdownOpen}
-          setIsOpen={setIsDropdownOpen}
-          userName="John Doe"
-          userEmail="john@example.com"
-          onViewProfile={() => console.log('View Profile')}
-          onSettings={() => console.log('Settings')}
-          onReportProblem={() => console.log('Report Problem')}
+        <NotificationBell 
+          notifications={notifications}
+          unreadCount={unreadCount}
+          setUnreadCount={setUnreadCount}
         />
+        
+        <div 
+          className="user-profile-circle"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsDropdownOpen(prev => !prev);  
+          }}
+          style={{ cursor: 'pointer' }}
+        >
+          👤
+        </div>
       </div>
     </div>
   );
 }
+
 
 export default Header;
