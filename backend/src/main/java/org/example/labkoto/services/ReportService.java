@@ -22,7 +22,7 @@ public class ReportService {
 
     public Report createReport(Integer userId, String reportContent) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("User with" + userId + " id not found"));
 
         Report report = new Report();
         report.setUser(user);
@@ -50,7 +50,7 @@ public class ReportService {
 
     public Report updateReportStatus(Integer reportId, String status, String adminResponse) {
         Report report = reportRepository.findById(reportId)
-            .orElseThrow(() -> new RuntimeException("Report not found"));
+            .orElseThrow(() -> new RuntimeException("Report with " + reportId + " id not found"));
 
         report.setStatus(status);
         if (adminResponse != null && !adminResponse.isBlank()) {

@@ -34,7 +34,7 @@ public class LabService {
 
     public Lab updateLab(Integer id, Lab labDetails) {
         Lab lab = labRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Lab not found"));
+            .orElseThrow(() -> new RuntimeException("Lab with " + id + " not found"));
 
         lab.setName(labDetails.getName());
         lab.setCapacity(labDetails.getCapacity());
@@ -46,7 +46,7 @@ public class LabService {
 
     public Lab updateStatus(Integer labId, boolean isActive) {
         Lab lab = labRepository.findById(labId)
-            .orElseThrow(() -> new IllegalArgumentException("Lab not found"));
+            .orElseThrow(() -> new RuntimeException("Lab with " + labId + " not found"));
         lab.setIsActive(isActive);
         return labRepository.save(lab);
     }
