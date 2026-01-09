@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS users
     email          TEXT NOT NULL UNIQUE,
     password       TEXT NOT NULL,
     account_type   TEXT NOT NULL CHECK (account_type IN ('student', 'professor', 'admin')),
-    email_verified INTEGER DEFAULT 0 CHECK (email_verified IN (0, 1))
+    email_verified INTEGER DEFAULT 0 CHECK (email_verified IN (0, 1)),
+    program        TEXT,
+    section        TEXT
 );
 
 CREATE TABLE IF NOT EXISTS labs
@@ -26,6 +28,8 @@ CREATE TABLE IF NOT EXISTS reservations
     start_time  TEXT    NOT NULL,
     end_time    TEXT    NOT NULL,
     purpose     TEXT    NOT NULL,
+    program     TEXT,
+    section     TEXT,
     status      TEXT    NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'denied')),
     admin_notes TEXT,
     created_at  TEXT             DEFAULT CURRENT_TIMESTAMP,

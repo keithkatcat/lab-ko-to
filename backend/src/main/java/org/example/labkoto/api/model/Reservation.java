@@ -33,6 +33,12 @@ public class Reservation {
     @Column (nullable = false)
     private String purpose;
 
+    @Column(name = "program")
+    private String program;
+
+    @Column(name = "section")
+    private String section;
+
     @Column (nullable = false)
     private String status = "pending";
 
@@ -128,6 +134,22 @@ public class Reservation {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getProgram() {
+        return program;
+    }
+
+    public void setProgram(String program) {
+        this.program = program;
+    }
+
+    public String getSection() {
+        return section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
     }
 }
 
