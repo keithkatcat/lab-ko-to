@@ -43,7 +43,7 @@ const LoginSignup = ({onLoginSuccess}) => {
                 // Get user details to extract user ID and role
                 const userResponse = await fetch('http://localhost:9090/api/user/me', {
                     headers: {
-                        'Authorization': 'Bearer ${token}'
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -170,15 +170,15 @@ const LoginSignup = ({onLoginSuccess}) => {
                         <h2>I am a...</h2>
                         <div className="role-buttons">
                             <button
-                                className="role-btn student-btn"
-                                onClick={() => handleRoleSelect('student')}
+                                className="role-btn student/faculty-btn"
+                                onClick={() => handleRoleSelect('student/faculty')}
                             >
                                 <i className="fa-solid fa-user-graduate"></i>
                                 <span>Student</span>
                             </button>
                             <button
-                                className="role-btn faculty-btn"
-                                onClick={() => handleRoleSelect('faculty')}
+                                className="role-btn admin-btn"
+                                onClick={() => handleRoleSelect('admin')}
                             >
                                 <i className="fa-solid fa-chalkboard-teacher"></i>
                                 <span>Faculty</span>
