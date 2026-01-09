@@ -59,15 +59,7 @@ export function Header({ labkoto_logo, currentMonth, currentYear, setCurrentMont
       </div>
 
       <div className="header-right">
-        <div 
-          className="user-profile-circle" 
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          style={{ cursor: 'pointer' }}
-        >
-          
-        </div>
-        
-        <DropdownMenu 
+        <DropdownMenu
           isOpen={isDropdownOpen}
           setIsOpen={setIsDropdownOpen}
           userName="John Doe"
