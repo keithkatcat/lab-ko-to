@@ -2,329 +2,351 @@ import React, { useState, useEffect } from 'react';
 import './Settings.css';
 
 const Settings = ({ isOpen, onClose }) => {
-  const [currentEmail, setCurrentEmail] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteReason, setDeleteReason] = useState('');
-  const [loading, setLoading] = useState(false);
+    const [currentEmail, setCurrentEmail] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteReason, setDeleteReason] = useState('');
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const email = localStorage.getItem('userEmail');
-        if (email) {
-          setCurrentEmail(email);
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const email = localStorage.getItem('userEmail');
+                if (email) {
+                    setCurrentEmail(email);
+                }
+            } catch (error) {
+                console.error('Error fetching user email:', error);
+                setMessage({ type: 'error', text: 'Failed to load user data' });
+            }
+        };
+
+        if (isOpen) {
+            fetchUserData();
+            // Reset form fields
+            setNewEmail('');
+            setCurrentPasswordForEmail('');
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setMessage({ type: '', text: '' });
         }
-      } catch (error) {
-        console.error('Error fetching user email:', error);
-        setMessage({ type: 'error', text: 'Failed to load user data' });
-      }
+    }, [isOpen]);
+
+    const handleEmailChange = async (e) => {
+        e.preventDefault();
+        setMessage({ type: '', text: '' });
+
+        if (!newEmail || !currentPasswordForEmail) {
+            setMessage({ type: 'error', text: 'Please fill in all fields' });
+            return;
+        }
+
+        if (newEmail === currentEmail) {
+            setMessage({ type: 'error', text: 'New email is the same as current email' });
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newEmail)) {
+            setMessage({ type: 'error', text: 'Please enter a valid email address' });
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('http://localhost:9090/api/user/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    email: newEmail,
+                    oldPassword: currentPasswordForEmail
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Failed to change email' }));
+                throw new Error(errorData.message || 'Failed to change email');
+            }
+
+            const data = await response.json();
+            console.log('Email updated:', data);
+
+            // Update local state and storage
+            setCurrentEmail(newEmail);
+            localStorage.setItem('userEmail', newEmail);
+            setNewEmail('');
+            setCurrentPasswordForEmail('');
+            setMessage({ type: 'success', text: 'Email successfully updated!' });
+        } catch (error) {
+            console.error('Error changing email:', error);
+            setMessage({ type: 'error', text: error.message || 'Failed to change email. Please check your password.' });
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (isOpen) {
-      fetchUserData();
-      setNewEmail('');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setMessage({ type: '', text: '' });
-    }
-  }, [isOpen]);
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        setMessage({ type: '', text: '' });
 
-  const handleEmailChange = async (e) => {
-    e.preventDefault();
-    setMessage({ type: '', text: '' });
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            setMessage({ type: 'error', text: 'Please fill in all password fields' });
+            return;
+        }
 
-    if (!newEmail || !currentPassword) {
-      setMessage({ type: 'error', text: 'Please fill in all fields' });
-      return;
-    }
+        if (newPassword !== confirmPassword) {
+            setMessage({ type: 'error', text: 'New passwords do not match' });
+            return;
+        }
 
-    if (newEmail === currentEmail) {
-      setMessage({ type: 'error', text: 'New email is the same as current email' });
-      return;
-    }
+        if (newPassword.length < 6) {
+            setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+            return;
+        }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newEmail)) {
-      setMessage({ type: 'error', text: 'Please enter a valid email address' });
-      return;
-    }
+        if (currentPassword === newPassword) {
+            setMessage({ type: 'error', text: 'New password must be different from current password' });
+            return;
+        }
 
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch('http://localhost:9090/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          email: newEmail,
-          oldPassword: currentPassword
-        })
-      });
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to change email');
-      }
+            const response = await fetch('http://localhost:9090/api/user/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    oldPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            });
 
-      await response.json(); 
-      
-      setCurrentEmail(newEmail);
-      localStorage.setItem('userEmail', newEmail);
-      setNewEmail('');
-      setCurrentPassword('');
-      setMessage({ type: 'success', text: 'Email successfully updated!' });
-    } catch (error) {
-      console.error('Error changing email:', error);
-      setMessage({ type: 'error', text: error.message || 'Failed to change email. Please check your password.' });
-    } finally {
-      setLoading(false);
-    }
-  };
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Failed to change password' }));
+                throw new Error(errorData.message || 'Failed to change password');
+            }
 
-  const handlePasswordChange = async (e) => {
-    e.preventDefault();
-    setMessage({ type: '', text: '' });
+            // Clear password fields on success
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            setMessage({ type: 'success', text: 'Password successfully updated!' });
+        } catch (error) {
+            console.error('Error changing password:', error);
+            setMessage({ type: 'error', text: error.message || 'Failed to change password. Please check your current password.' });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setMessage({ type: 'error', text: 'Please fill in all password fields' });
-      return;
-    }
+    const handleRequestDeletion = async () => {
+        if (!deleteReason.trim()) {
+            setMessage({ type: 'error', text: 'Please provide a reason for account deletion' });
+            return;
+        }
 
-    if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' });
-      return;
-    }
+        setLoading(true);
+        try {
+            // TODO: Implement actual deletion request API call
+            // For now, just show success message
+            console.log('Deletion request submitted:', deleteReason);
 
-    if (newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
-      return;
-    }
+            setMessage({
+                type: 'success',
+                text: 'Deletion request submitted. An admin will review your request.'
+            });
+            setShowDeleteConfirm(false);
+            setDeleteReason('');
+        } catch (error) {
+            console.error('Error requesting account deletion:', error);
+            setMessage({ type: 'error', text: 'Failed to submit deletion request. Please try again.' });
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      
-      const response = await fetch('http://localhost:9090/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          oldPassword: currentPassword,
-          newPassword: newPassword
-        })
-      });
+    if (!isOpen) return null;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to change password');
-      }
+    return (
+        <>
+            <div className="settings-overlay" onClick={onClose}>
+                <div className="settings-container" onClick={(e) => e.stopPropagation()}>
+                    <button className="settings-close" onClick={onClose}>×</button>
 
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setMessage({ type: 'success', text: 'Password successfully updated!' });
-    } catch (error) {
-      console.error('Error changing password:', error);
-      setMessage({ type: 'error', text: error.message || 'Failed to change password. Please check your current password.' });
-    } finally {
-      setLoading(false);
-    }
-  };
+                    <div className="settings-header">
+                        <div className="settings-title">Settings</div>
+                        <div className="settings-subtitle">Manage your account preferences</div>
+                    </div>
 
-  const handleRequestDeletion = async () => {
-    if (!deleteReason.trim()) {
-      setMessage({ type: 'error', text: 'Please provide a reason for account deletion' });
-      return;
-    }
+                    {message.text && (
+                        <div className={`settings-message ${message.type}`}>
+                            {message.text}
+                        </div>
+                    )}
 
-    setLoading(true);
-    try {
-      setMessage({ type: 'success', text: 'Deletion request submitted. An admin will review your request.' });
-      setShowDeleteConfirm(false);
-      setDeleteReason('');
-    } catch (error) {
-      console.error('Error requesting account deletion:', error);
-      setMessage({ type: 'error', text: 'Failed to submit deletion request. Please try again.' });
-    } finally {
-      setLoading(false);
-    }
-  };
+                    {/* Change Email Section */}
+                    <div className="settings-section">
+                        <div className="settings-section-title">Change Email</div>
+                        <div className="settings-current-email">
+                            Current: {currentEmail || 'Loading...'}
+                        </div>
+                        <form onSubmit={handleEmailChange}>
+                            <div className="settings-form-group">
+                                <label className="settings-label">New Email Address</label>
+                                <input
+                                    type="email"
+                                    value={newEmail}
+                                    onChange={(e) => setNewEmail(e.target.value)}
+                                    className="settings-input"
+                                    placeholder="Enter new email"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="settings-form-group">
+                                <label className="settings-label">Current Password</label>
+                                <input
+                                    type="password"
+                                    value={currentPasswordForEmail}
+                                    onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
+                                    className="settings-input"
+                                    placeholder="Enter password to confirm"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="settings-button settings-save-btn"
+                                disabled={loading}
+                            >
+                                {loading ? 'Updating...' : 'Update Email'}
+                            </button>
+                        </form>
+                    </div>
 
-  if (!isOpen) return null;
+                    {/* Change Password Section */}
+                    <div className="settings-section">
+                        <div className="settings-section-title">Change Password</div>
+                        <form onSubmit={handlePasswordChange}>
+                            <div className="settings-form-group">
+                                <label className="settings-label">Current Password</label>
+                                <input
+                                    type="password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    className="settings-input"
+                                    placeholder="Enter current password"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="settings-form-group">
+                                <label className="settings-label">New Password</label>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    className="settings-input"
+                                    placeholder="Enter new password (min 6 characters)"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <div className="settings-form-group">
+                                <label className="settings-label">Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    className="settings-input"
+                                    placeholder="Confirm new password"
+                                    disabled={loading}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="settings-button settings-save-btn"
+                                disabled={loading}
+                            >
+                                {loading ? 'Updating...' : 'Update Password'}
+                            </button>
+                        </form>
+                    </div>
 
-  return (
-    <>
-      <div className="settings-overlay" onClick={onClose}>
-        <div className="settings-container" onClick={(e) => e.stopPropagation()}>
-          <button className="settings-close" onClick={onClose}>×</button>
-          
-          <div className="settings-header">
-            <div className="settings-title">Settings</div>
-            <div className="settings-subtitle">Manage your account preferences</div>
-          </div>
-
-          {message.text && (
-            <div className={`settings-message ${message.type}`}>
-              {message.text}
+                    {/* Account Deletion Section */}
+                    <div className="settings-section">
+                        <div className="settings-danger-zone">
+                            <div className="settings-danger-title">Request Account Deletion</div>
+                            <div className="settings-danger-description">
+                                Submit a request to delete your account. An administrator will review and process your request.
+                            </div>
+                            <button
+                                className="settings-button settings-delete-btn"
+                                onClick={() => setShowDeleteConfirm(true)}
+                                disabled={loading}
+                            >
+                                Request Account Deletion
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          )}
 
-          <div className="settings-section">
-            <div className="settings-section-title">Change Email</div>
-            <div className="settings-current-email">
-              Current: {currentEmail}
-            </div>
-            <form onSubmit={handleEmailChange}>
-              <div className="settings-form-group">
-                <label className="settings-label">New Email Address</label>
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className="settings-input"
-                  placeholder="Enter new email"
-                  disabled={loading}
-                />
-              </div>
-              <div className="settings-form-group">
-                <label className="settings-label">Current Password</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="settings-input"
-                  placeholder="Enter password to confirm"
-                  disabled={loading}
-                />
-              </div>
-              <button
-                type="submit"
-                className="settings-button settings-save-btn"
-                disabled={loading}
-              >
-                {loading ? 'Updating...' : 'Update Email'}
-              </button>
-            </form>
-          </div>
-
-          <div className="settings-section">
-            <div className="settings-section-title">Change Password</div>
-            <form onSubmit={handlePasswordChange}>
-              <div className="settings-form-group">
-                <label className="settings-label">Current Password</label>
-                <input
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="settings-input"
-                  placeholder="Enter current password"
-                  disabled={loading}
-                />
-              </div>
-              <div className="settings-form-group">
-                <label className="settings-label">New Password</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="settings-input"
-                  placeholder="Enter new password"
-                  disabled={loading}
-                />
-              </div>
-              <div className="settings-form-group">
-                <label className="settings-label">Confirm New Password</label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="settings-input"
-                  placeholder="Confirm new password"
-                  disabled={loading}
-                />
-              </div>
-              <button
-                type="submit"
-                className="settings-button settings-save-btn"
-                disabled={loading}
-              >
-                {loading ? 'Updating...' : 'Update Password'}
-              </button>
-            </form>
-          </div>
-
-          <div className="settings-section">
-            <div className="settings-danger-zone">
-              <div className="settings-danger-title">Request Account Deletion</div>
-              <div className="settings-danger-description">
-                Submit a request to delete your account. An administrator will review and process your request.
-              </div>
-              <button
-                className="settings-button settings-delete-btn"
-                onClick={() => setShowDeleteConfirm(true)}
-                disabled={loading}
-              >
-                Request Account Deletion
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {showDeleteConfirm && (
-        <div className="settings-confirm-overlay">
-          <div className="settings-confirm-dialog">
-            <div className="settings-confirm-title">⚠️ Request Account Deletion?</div>
-            <div className="settings-confirm-message">
-              Your request will be sent to an administrator for review.
-              Please provide a reason for deletion.
-            </div>
-            <div className="settings-form-group">
+            {/* Deletion Confirmation Dialog */}
+            {showDeleteConfirm && (
+                <div className="settings-confirm-overlay">
+                    <div className="settings-confirm-dialog">
+                        <div className="settings-confirm-title">⚠️ Request Account Deletion?</div>
+                        <div className="settings-confirm-message">
+                            Your request will be sent to an administrator for review.
+                            Please provide a reason for deletion.
+                        </div>
+                        <div className="settings-form-group">
               <textarea
-                value={deleteReason}
-                onChange={(e) => setDeleteReason(e.target.value)}
-                className="settings-input"
-                placeholder="Please tell us why you want to delete your account..."
-                disabled={loading}
+                  value={deleteReason}
+                  onChange={(e) => setDeleteReason(e.target.value)}
+                  className="settings-input"
+                  placeholder="Please tell us why you want to delete your account..."
+                  disabled={loading}
+                  rows="4"
               />
-            </div>
-            <div className="settings-confirm-buttons">
-              <button
-                className="settings-cancel-btn"
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeleteReason('');
-                }}
-                disabled={loading}
-              >
-                Cancel
-              </button>
-              <button
-                className="settings-confirm-btn"
-                onClick={handleRequestDeletion}
-                disabled={loading}
-              >
-                {loading ? 'Submitting...' : 'Submit Request'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
+                        </div>
+                        <div className="settings-confirm-buttons">
+                            <button
+                                className="settings-cancel-btn"
+                                onClick={() => {
+                                    setShowDeleteConfirm(false);
+                                    setDeleteReason('');
+                                }}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="settings-confirm-btn"
+                                onClick={handleRequestDeletion}
+                                disabled={loading}
+                            >
+                                {loading ? 'Submitting...' : 'Submit Request'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
 };
-
 
 export default Settings;
