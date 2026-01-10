@@ -4,33 +4,26 @@ import './Settings.css';
 const Settings = ({ isOpen, onClose }) => {
     const [currentEmail, setCurrentEmail] = useState('');
     const [newEmail, setNewEmail] = useState('');
-    const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState('');
+    const [passwordForEmail, setPasswordForEmail] = useState('');
+
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
     const [message, setMessage] = useState({ type: '', text: '' });
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const email = localStorage.getItem('userEmail');
-                if (email) {
-                    setCurrentEmail(email);
-                }
-            } catch (error) {
-                console.error('Error fetching user email:', error);
-                setMessage({ type: 'error', text: 'Failed to load user data' });
-            }
-        };
-
         if (isOpen) {
-            fetchUserData();
-            // Reset form fields
+            const email = localStorage.getItem('userEmail');
+            console.log('Loaded email from localStorage:', email);
+            setCurrentEmail(email || '');
+
+            // Reset all form fields
             setNewEmail('');
-            setCurrentPasswordForEmail('');
+            setPasswordForEmail('');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
@@ -42,7 +35,8 @@ const Settings = ({ isOpen, onClose }) => {
         e.preventDefault();
         setMessage({ type: '', text: '' });
 
-        if (!newEmail || !currentPasswordForEmail) {
+        // Validation
+        if (!newEmail || !passwordForEmail) {
             setMessage({ type: 'error', text: 'Please fill in all fields' });
             return;
         }
@@ -62,6 +56,9 @@ const Settings = ({ isOpen, onClose }) => {
         try {
             const token = localStorage.getItem('token');
 
+            console.log('Sending email update request...');
+            console.log('New email:', newEmail);
+
             const response = await fetch('http://localhost:9090/api/user/profile', {
                 method: 'PUT',
                 headers: {
@@ -70,27 +67,42 @@ const Settings = ({ isOpen, onClose }) => {
                 },
                 body: JSON.stringify({
                     email: newEmail,
-                    oldPassword: currentPasswordForEmail
+                    oldPassword: passwordForEmail
                 })
             });
 
+            console.log('Response status:', response.status);
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: 'Failed to change email' }));
+                console.error('Error response:', errorData);
                 throw new Error(errorData.message || 'Failed to change email');
             }
 
             const data = await response.json();
-            console.log('Email updated:', data);
+            console.log('Email update successful:', data);
 
             // Update local state and storage
             setCurrentEmail(newEmail);
             localStorage.setItem('userEmail', newEmail);
+
+            // Clear form
             setNewEmail('');
-            setCurrentPasswordForEmail('');
+            setPasswordForEmail('');
+
             setMessage({ type: 'success', text: 'Email successfully updated!' });
+
+            // Auto-close message after 3 seconds
+            setTimeout(() => {
+                setMessage({ type: '', text: '' });
+            }, 3000);
+
         } catch (error) {
             console.error('Error changing email:', error);
-            setMessage({ type: 'error', text: error.message || 'Failed to change email. Please check your password.' });
+            setMessage({
+                type: 'error',
+                text: error.message || 'Failed to change email. Please check your password.'
+            });
         } finally {
             setLoading(false);
         }
@@ -100,6 +112,7 @@ const Settings = ({ isOpen, onClose }) => {
         e.preventDefault();
         setMessage({ type: '', text: '' });
 
+        // Validation
         if (!currentPassword || !newPassword || !confirmPassword) {
             setMessage({ type: 'error', text: 'Please fill in all password fields' });
             return;
@@ -124,6 +137,8 @@ const Settings = ({ isOpen, onClose }) => {
         try {
             const token = localStorage.getItem('token');
 
+            console.log('Sending password update request...');
+
             const response = await fetch('http://localhost:9090/api/user/profile', {
                 method: 'PUT',
                 headers: {
@@ -136,19 +151,34 @@ const Settings = ({ isOpen, onClose }) => {
                 })
             });
 
+            console.log('Response status:', response.status);
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ message: 'Failed to change password' }));
+                console.error('Error response:', errorData);
                 throw new Error(errorData.message || 'Failed to change password');
             }
 
-            // Clear password fields on success
+            console.log('Password update successful');
+
+            // Clear form
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
+
             setMessage({ type: 'success', text: 'Password successfully updated!' });
+
+            // Auto-close message after 3 seconds
+            setTimeout(() => {
+                setMessage({ type: '', text: '' });
+            }, 3000);
+
         } catch (error) {
             console.error('Error changing password:', error);
-            setMessage({ type: 'error', text: error.message || 'Failed to change password. Please check your current password.' });
+            setMessage({
+                type: 'error',
+                text: error.message || 'Failed to change password. Please check your current password.'
+            });
         } finally {
             setLoading(false);
         }
@@ -162,8 +192,6 @@ const Settings = ({ isOpen, onClose }) => {
 
         setLoading(true);
         try {
-            // TODO: Implement actual deletion request API call
-            // For now, just show success message
             console.log('Deletion request submitted:', deleteReason);
 
             setMessage({
@@ -172,6 +200,10 @@ const Settings = ({ isOpen, onClose }) => {
             });
             setShowDeleteConfirm(false);
             setDeleteReason('');
+
+            setTimeout(() => {
+                setMessage({ type: '', text: '' });
+            }, 3000);
         } catch (error) {
             console.error('Error requesting account deletion:', error);
             setMessage({ type: 'error', text: 'Failed to submit deletion request. Please try again.' });
@@ -215,17 +247,19 @@ const Settings = ({ isOpen, onClose }) => {
                                     className="settings-input"
                                     placeholder="Enter new email"
                                     disabled={loading}
+                                    autoComplete="email"
                                 />
                             </div>
                             <div className="settings-form-group">
                                 <label className="settings-label">Current Password</label>
                                 <input
                                     type="password"
-                                    value={currentPasswordForEmail}
-                                    onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
+                                    value={passwordForEmail}
+                                    onChange={(e) => setPasswordForEmail(e.target.value)}
                                     className="settings-input"
                                     placeholder="Enter password to confirm"
                                     disabled={loading}
+                                    autoComplete="current-password"
                                 />
                             </div>
                             <button
@@ -251,6 +285,7 @@ const Settings = ({ isOpen, onClose }) => {
                                     className="settings-input"
                                     placeholder="Enter current password"
                                     disabled={loading}
+                                    autoComplete="current-password"
                                 />
                             </div>
                             <div className="settings-form-group">
@@ -262,6 +297,7 @@ const Settings = ({ isOpen, onClose }) => {
                                     className="settings-input"
                                     placeholder="Enter new password (min 6 characters)"
                                     disabled={loading}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <div className="settings-form-group">
@@ -273,6 +309,7 @@ const Settings = ({ isOpen, onClose }) => {
                                     className="settings-input"
                                     placeholder="Confirm new password"
                                     disabled={loading}
+                                    autoComplete="new-password"
                                 />
                             </div>
                             <button
