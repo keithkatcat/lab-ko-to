@@ -303,3 +303,66 @@
 .event:hover .event-tooltip {
     opacity: 1;
 }
+
+/* Loading indicator */
+.calendar-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #880015;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Refresh button hover effects */
+.calendar-refresh-btn {
+    background: #880015;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.calendar-refresh-btn:hover:not(:disabled) {
+    background: #5a2828;
+}
+
+.calendar-refresh-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Spinner animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loading overlay for refresh */
+.calendar-refreshing {
+    position: relative;
+}
+
+.calendar-refreshing::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    z-index: 10;
+}
